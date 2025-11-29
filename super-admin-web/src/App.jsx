@@ -12,19 +12,45 @@ import Settings from './pages/Settings';
 import SchoolDashboard from './pages/SchoolDashboard';
 import ActivityLogs from './pages/ActivityLogs';
 import SupportTickets from './pages/SupportTickets';
-import ProfilePage from './pages/ProfilePage'; // Import ProfilePage component
-import ManagePlans from './pages/ManagePlans'; // New import
-import Reports from './pages/Reports'; // New import
-import StoreOrders from './pages/StoreOrders'; // New import for Store Orders
-import NotFound from './pages/NotFound'; // New import
-import CommandPalette from './components/CommandPalette'; // New import
-import { ThemeProvider } from './context/ThemeContext'; // New import
+import ProfilePage from './pages/ProfilePage';
+import ManagePlans from './pages/ManagePlans';
+import Reports from './pages/Reports';
+import StoreOrders from './pages/StoreOrders';
+import NotFound from './pages/NotFound';
+import CommandPalette from './components/CommandPalette';
+import { ThemeProvider } from './context/ThemeContext';
+import Schools from './pages/Schools';
 import './App.css';
+
+// HomeStats component to show summary cards
+const HomeStats = () => (
+  <>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+        <h3 className="text-gray-500 text-sm font-medium">Total Schools</h3>
+        <p className="text-3xl font-bold text-gray-800 mt-2">12</p>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+        <h3 className="text-gray-500 text-sm font-medium">Active Students</h3>
+        <p className="text-3xl font-bold text-green-600 mt-2">1,240</p>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+        <h3 className="text-gray-500 text-sm font-medium">Total Revenue</h3>
+        <p className="text-3xl font-bold text-blue-600 mt-2">₹ 4.5L</p>
+      </div>
+    </div>
+
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+      <h3 className="text-lg font-bold text-gray-800 mb-4">Recent Activities</h3>
+      <p className="text-gray-500">No recent activities found.</p>
+    </div>
+  </>
+);
 
 const AppContent = () => {
   const { isImpersonating, impersonatedTenant, stopImpersonation } = useImpersonation();
   const navigate = useNavigate();
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false); // New state for command palette
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -60,22 +86,29 @@ const AppContent = () => {
       )}
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={
+          <DashboardLayout>
+            <HomeStats />
+          </DashboardLayout>
+        } />
+        <Route path="/schools" element={
+          <DashboardLayout>
+            <Schools />
+          </DashboardLayout>
+        } />
         <Route path="/school-dashboard" element={<SchoolDashboard />} />
-        <Route path="/" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="tenants" element={<ManageTenants />} />
-          <Route path="tenants/add" element={<AddTenant />} />
-          <Route path="finance" element={<Finance />} />
-          <Route path="finance-ledger" element={<FinanceLedger />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="activity-logs" element={<ActivityLogs />} />
-          <Route path="support-tickets" element={<SupportTickets />} />
-          <Route path="profile" element={<ProfilePage />} /> {/* New ProfilePage Route */}
-          <Route path="plans" element={<ManagePlans />} /> {/* New ManagePlans Route */}
-          <Route path="reports" element={<Reports />} /> {/* New Reports Route */}
-          <Route path="store-orders" element={<StoreOrders />} /> {/* Store Orders Route */}
-        </Route>
-        <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
+        <Route path="/tenants" element={<ManageTenants />} />
+        <Route path="/tenants/add" element={<AddTenant />} />
+        <Route path="/finance" element={<Finance />} />
+        <Route path="/finance-ledger" element={<FinanceLedger />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/activity-logs" element={<ActivityLogs />} />
+        <Route path="/support-tickets" element={<SupportTickets />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/plans" element={<ManagePlans />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/store-orders" element={<StoreOrders />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} /> {/* Command Palette */}
     </>
