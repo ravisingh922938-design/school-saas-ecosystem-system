@@ -1,52 +1,21 @@
 const mongoose = require('mongoose');
 
-const SchoolSchema = mongoose.Schema({
-  instituteCode: {
-    type: String,
-    required: true,
+const schoolSchema = mongoose.Schema({
+  name: { type: String, required: true },
+  schoolCode: { 
+    type: String, 
+    required: true, 
     unique: true,
+    uppercase: true,
+    minlength: 2,
+    maxlength: 5,
+    match: [/^[A-Z0-9]+$/, 'School code must be alphanumeric and uppercase']
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  institutionType: {
-    type: String,
-    required: true,
-    enum: ['School', 'Coaching'],
-  },
-  paymentConfig: {
-    surchargeAmount: {
-      type: Number,
-      default: 0,
-    },
-  },
-  features: {
-    transport: {
-      type: Boolean,
-      default: false,
-    },
-    sms: {
-      type: Boolean,
-      default: false,
-    },
-    // Add other features as needed
-  },
-  smsBalance: {
-    type: Number,
-    default: 0,
-  },
-});
+  email: { type: String, required: true, unique: true },
+  phone: { type: String },
+  address: { type: String },
+  status: { type: String, default: 'Active' },
+  subscriptionPlan: { type: String, default: 'Basic' }
+}, { timestamps: true });
 
-module.exports = mongoose.model('School', SchoolSchema);
-
-
-
-
-
-
-
-
-
-
-
+module.exports = mongoose.model('School', schoolSchema);

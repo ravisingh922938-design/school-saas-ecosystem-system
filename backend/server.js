@@ -1,57 +1,44 @@
-const dotenv = require('dotenv');
 const express = require('express');
+const dotenv = require('dotenv');
 const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const connectDB = require('./config/db');
+const mongoose = require('mongoose');
+
+// Route Imports
 const authRoutes = require('./routes/authRoutes');
-const superAdminRoutes = require('./routes/superAdminRoutes');
-const schoolRoutes = require('./routes/schoolRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');
-const testRoutes = require('./routes/testRoutes');
-const attendanceRoutes = require('./routes/attendanceRoutes');
-const financeRoutes = require('./routes/financeRoutes');
-const { errorHandler } = require('./middleware/errorMiddleware'); // Assuming you'd want a generic error handler
+const studentRoutes = require('./routes/studentRoutes');
+// const superAdminRoutes = require('./routes/superAdminRoutes'); // (Agar bani ho to uncomment karein)
+// const schoolRoutes = require('./routes/schoolRoutes');     // (Agar bani ho to uncomment karein)
 
+// Config
 dotenv.config();
-
-connectDB();
-
 const app = express();
 
-// Middlewares
+// Middleware
+app.use(cors({ origin: '*', credentials: true })); // Allow all for now
 app.use(express.json());
-// Enable CORS for all routes
-app.use(cors({
-  origin: '*',
-  credentials: true
-}));
-app.use(helmet());
-app.use(morgan('dev'));
 
-// Routes
+// Database Connection (Agar MONGO_URI set hai to connect karega, warna skip karega crash hone se bachane ke liye)
+if (process.env.MONGO_URI) {
+  mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('✅ MongoDB Connected'))
+    .catch(err => console.log('❌ DB Error:', err));
+} else {
+  console.log('⚠️ Warning: MONGO_URI not found in .env');
+}
+
+// Routes Mount Karna
 app.use('/api/auth', authRoutes);
-app.use('/api/superadmin', superAdminRoutes);
-app.use('/api/school', schoolRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/upload', uploadRoutes);
-app.use('/api/tests', testRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/finance', financeRoutes);
+app.use('/api/students', studentRoutes);
+// app.use('/api/super-admin', superAdminRoutes);
+// app.use('/api/school', schoolRoutes);
 
-// Test Route
-// Root route
+// Root Route (Testing ke liye)
 app.get('/', (req, res) => {
-  res.send('API is Running Successfully');
+  res.send('API is Running Successfully...');
 });
 
-// Error handling middleware
-app.use(errorHandler);
-
+// Server Listen
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🎉`);
+  console.log(`🚀 Server running on Port ${PORT}`);
 });
-

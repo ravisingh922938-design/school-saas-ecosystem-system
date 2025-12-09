@@ -1,100 +1,35 @@
 const asyncHandler = require('express-async-handler');
-const bcrypt = require('bcryptjs');
-const School = require('../models/School');
-const User = require('../models/User'); // Import User model
-const FeeRecord = require('../models/FeeRecord'); // Import FeeRecord model
+const jwt = require('jsonwebtoken');
+const User = require('../models/User'); // Ensure User model exists
 
-// @desc    Create new school
-// @route   POST /api/superadmin/schools
-// @access  Private (Super Admin only) - This would be protected by middleware
-const createSchool = asyncHandler(async (req, res) => {
-  const { name, institutionType, surchargeAmount, features } = req.body;
-
-  if (!name || !institutionType) {
-    res.status(400);
-    throw new Error('Please add all required fields: name and institutionType');
-  }
-
-  // Generate a random password for the school admin
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash('default_admin_password', salt); // Consider generating a strong random password or having a separate registration for school admin
-
-  const school = await School.create({
-    instituteCode: name, // Assuming 'name' will be used as instituteCode for now
-    password: hashedPassword,
-    institutionType,
-    paymentConfig: {
-      surchargeAmount: surchargeAmount || 0,
-    },
-    features: {
-      transport: features?.transport || false,
-      sms: features?.sms || false,
-      // Add other default features or parse from input
-    },
+// Token Generator Function
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '30d',
   });
-
-  if (school) {
-    res.status(201).json({
-      _id: school.id,
-      instituteCode: school.instituteCode,
-      institutionType: school.institutionType,
-      paymentConfig: school.paymentConfig,
-      features: school.features,
-    });
-  } else {
-    res.status(400);
-    throw new Error('Invalid school data');
-  }
-});
-
-// @desc    Get Super Admin Dashboard Stats
-// @route   GET /api/superadmin/dashboard/stats
-// @access  Private (Super Admin only)
-const getDashboardStats = asyncHandler(async (req, res) => {
-  const totalActiveSchools = await School.countDocuments({});
-  const totalStudents = await User.countDocuments({ role: 'Student' });
-
-  const totalRevenueResult = await FeeRecord.aggregate([{
-    $match: {
-      status: 'Paid'
-    }
-  }, {
-    $group: {
-      _id: null,
-      totalAmount: {
-        $sum: '$amount'
-      },
-      totalSurcharge: {
-        $sum: '$surcharge'
-      },
-      totalAdminCommission: {
-        $sum: '$adminCommission'
-      },
-    },
-  }, ]);
-
-  const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].totalAmount : 0;
-  const totalSurcharge = totalRevenueResult.length > 0 ? totalRevenueResult[0].totalSurcharge : 0;
-  const totalAdminCommission = totalRevenueResult.length > 0 ? totalRevenueResult[0].totalAdminCommission : 0;
-
-
-  res.status(200).json({
-    totalActiveSchools,
-    totalStudents,
-    totalRevenue,
-    totalSurcharge,
-    totalAdminCommission,
-  });
-});
-
-module.exports = {
-  createSchool,
-  getDashboardStats,
 };
 
+// @desc    Auth Super Admin & get token
+// @route   POST /api/super-admin/login
+// @access  Public
+const authUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
+  // 1. Temporary Hardcoded Admin Check (Kyuki abhi Database khali hai)
+  // Baad mein hum Database se check karenge
+  if (email === 'admin@saas.com' && password === 'admin123') {
+    res.json({
+      _id: 'superadmin123',
+      name: 'Super Admin',
+      email: email,
+      role: 'super-admin',
+      token: generateToken('superadmin123'),
+    });
+  } else {
+    // Agar galat password hai
+    res.status(401);
+    throw new Error('Invalid email or password');
+  }
+});
 
-
-
-
-
+module.exports = { authUser };

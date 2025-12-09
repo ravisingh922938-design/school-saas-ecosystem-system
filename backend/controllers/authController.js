@@ -1,81 +1,75 @@
-const asyncHandler = require('express-async-handler');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const School = require('../models/School');
+const Tenant = require('../models/Tenant');
 const User = require('../models/User');
 
-// Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  });
-};
+const login = async (req, res) => {
+  const { role, identifier, password } = req.body;
 
-// @desc    Verify institute code
-// @route   GET /api/auth/verifyInstituteCode
-// @access  Public
-const verifyInstituteCode = asyncHandler(async (req, res) => {
-  const { instituteCode } = req.body;
+  try {
+    let user = null;
 
-  const school = await School.findOne({ instituteCode });
+    // ===================================================
+    // 🛠️ HARDCODED DEMO CREDENTIALS (Testing ke liye)
+    // ===================================================
 
-  if (school) {
-    res.json({
-      schoolName: school.instituteCode, // Assuming instituteCode can also be used as a name or a separate name field can be added
-      logo: 'URL_TO_SCHOOL_LOGO', // Placeholder for logo URL
-    });
-  } else {
-    res.status(404);
-    throw new Error('School not found');
-  }
-});
-
-// @desc    Authenticate a user
-// @route   POST /api/auth/login
-// @access  Public
-const login = asyncHandler(async (req, res) => {
-  const { email, password, instituteCode } = req.body;
-
-  // Check for user email
-  const user = await User.findOne({ email });
-
-  if (user && (await bcrypt.compare(password, user.password))) {
-    // Check if the user belongs to the correct schoolId
-    const school = await School.findOne({ instituteCode });
-
-    if (school && user.schoolId.toString() === school._id.toString()) {
-      res.json({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        schoolId: user.schoolId,
-        token: generateToken(user._id),
-      });
-    } else {
-      res.status(400);
-      throw new Error('Invalid credentials or school');
+    // 1. Super Admin Demo
+    if (role === 'super-admin' && identifier === 'admin@saas.com' && password === 'admin123') {
+      user = { _id: '1', name: 'Super Admin', role: 'super-admin' };
     }
-  }
 
-  else {
-    res.status(400);
-    throw new Error('Invalid credentials');
-  }
-});
+    // 2. School Principal Demo
+    else if (role === 'school' && identifier === 'principal@school.com' && password === 'school123') {
+      user = { _id: '2', name: 'Galaxy School Principal', role: 'school' };
+    }
 
-module.exports = {
-  verifyInstituteCode,
-  login,
+    // 3. Teacher Demo
+    else if (role === 'teacher' && identifier === 'T-2025-001' && password === 'teach123') {
+      user = { _id: '3', name: 'Rahul Sir', role: 'teacher' };
+    }
+
+    // 4. Student Demo
+    // Note: Yahan hum naya Enrollment ID format check kar rahe hain
+    else if (role === 'student' && (identifier === 'DPS-2025-0001' || identifier === 'STD-2025-101') && password === 'student123') {
+      user = { _id: '4', name: 'Arav Sharma', role: 'student' };
+    }
+
+    // ===================================================
+    // 🗄️ REAL DATABASE CHECK (Agar Demo nahi hai to DB check karo)
+    // ===================================================
+
+    if (!user) {
+      if (role === 'school') {
+        const tenant = await Tenant.findOne({ email: identifier });
+        if (tenant && tenant.password === password) {
+          user = tenant;
+        }
+      }
+      // Future mein yahan Student/Teacher DB logic aayega
+    }
+
+    // --- FINAL RESULT ---
+    if (!user) {
+      return res.status(401).json({ success: false, message: '❌ User not found or Wrong Password' });
+    }
+
+    // Token Generate
+    const token = jwt.sign(
+      { id: user._id, role: role },
+      process.env.JWT_SECRET || 'secret123',
+      { expiresIn: '1d' }
+    );
+
+    return res.status(200).json({
+      success: true,
+      token,
+      user,
+      message: 'Login Successful'
+    });
+
+  } catch (error) {
+    console.error("Login Error:", error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
 };
 
-
-
-
-
-
-
-
-
-
-
+module.exports = { login };
