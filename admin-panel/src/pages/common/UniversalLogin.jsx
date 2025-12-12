@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Lock, User, ArrowLeft, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Lock, User, ArrowLeft, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 
-// API Base URL (Localhost ya Live)
+// API Base URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const UniversalLogin = () => {
@@ -17,13 +17,37 @@ const UniversalLogin = () => {
     const [inputId, setInputId] = useState('');
     const [password, setPassword] = useState('');
 
-    // Config based on Role
+    // Enhanced Config based on Role
     const config = {
-        'super-admin': { title: 'Super Admin', label: 'Admin Email', placeholder: 'admin@saas.com' },
-        'school': { title: 'Principal', label: 'School Email', placeholder: 'principal@school.com' },
-        'teacher': { title: 'Teacher', label: 'Email / Emp ID', placeholder: 'T-2025-001' },
-        'student': { title: 'Student', label: 'Enrollment ID', placeholder: 'DPS-2025-0001' }, // ✅ New ID Format
-    }[role] || { title: 'Login', label: 'Username' };
+        'super-admin': {
+            title: 'Super Admin',
+            label: 'Admin Email',
+            placeholder: 'admin@saas.com',
+            welcome: 'Manage your entire SaaS ecosystem.',
+            gradient: 'from-slate-800 to-slate-900'
+        },
+        'school': {
+            title: 'Principal / Admin',
+            label: 'School Email',
+            placeholder: 'principal@school.com',
+            welcome: 'Oversee your institute\'s growth.',
+            gradient: 'from-blue-700 to-indigo-900'
+        },
+        'teacher': {
+            title: 'Teacher Portal',
+            label: 'Email / Emp ID',
+            placeholder: 'T-2025-001',
+            welcome: 'Manage classes & attendance efficiently.',
+            gradient: 'from-emerald-600 to-teal-900'
+        },
+        'student': {
+            title: 'Student Portal',
+            label: 'Enrollment ID',
+            placeholder: 'DPS-2025-0001',
+            welcome: 'Access your learning journey.',
+            gradient: 'from-orange-500 to-red-900'
+        },
+    }[role] || { title: 'Login', label: 'Username', welcome: 'Welcome back!', gradient: 'from-blue-600 to-blue-800' };
 
     // --- REAL LOGIN LOGIC ---
     const handleLogin = async (e) => {
@@ -32,19 +56,19 @@ const UniversalLogin = () => {
         setError('');
 
         try {
-            // 1. Backend ko Data bhejo
+            // 1. Backend Request
             const { data } = await axios.post(`${API_URL}/auth/login`, {
-                role,           // super-admin, school, etc.
-                identifier: inputId, // Email ya Enrollment ID
+                role,
+                identifier: inputId,
                 password: password
             });
 
-            // 2. Success: Token Save karo
+            // 2. Success Handler
             if (data.success) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                // 3. Sahi Dashboard par bhejo
+                // 3. Navigation
                 if (role === 'super-admin') navigate('/super-admin');
                 else if (role === 'school') navigate('/school');
                 else if (role === 'teacher') navigate('/teacher');
@@ -53,75 +77,139 @@ const UniversalLogin = () => {
 
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || 'Login Failed! Check details.');
+            setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-            <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        <div className="min-h-screen flex bg-white font-sans">
 
-                <Link to="/select-role" className="text-sm text-gray-400 hover:text-blue-600 mb-6 inline-flex items-center gap-1">
-                    <ArrowLeft size={16} /> Back
-                </Link>
+            {/* LEFT SIDE: Visuals & Branding (Hidden on Mobile) */}
+            <div className={`hidden lg:flex w-1/2 bg-gradient-to-br ${config.gradient} relative overflow-hidden flex-col justify-between p-12 text-white`}>
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">{config.title} Login</h2>
-                <p className="text-gray-500 mb-6">Enter credentials to access dashboard.</p>
-
-                {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 border border-red-100">
-                        {error}
+                {/* Logo Area */}
+                <div className="relative z-10 flex items-center gap-2">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center">
+                        <ShieldCheck size={24} className="text-white" />
                     </div>
-                )}
+                    <span className="text-2xl font-bold tracking-tight">SchoolOS</span>
+                </div>
 
-                <form onSubmit={handleLogin} className="space-y-5">
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">{config.label}</label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-3 text-gray-400" size={20} />
-                            <input
-                                type="text"
-                                value={inputId}
-                                onChange={(e) => setInputId(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                placeholder={config.placeholder}
-                                required
-                            />
+                {/* Hero Text */}
+                <div className="relative z-10 max-w-lg">
+                    <h1 className="text-5xl font-extrabold mb-6 leading-tight">
+                        {config.title}
+                    </h1>
+                    <p className="text-xl text-blue-100 font-light">
+                        {config.welcome}
+                    </p>
+                </div>
+
+                {/* Footer Text */}
+                <div className="relative z-10 text-sm text-white/60">
+                    © 2025 SchoolOS Ecosystem. Secure & Encrypted.
+                </div>
+            </div>
+
+            {/* RIGHT SIDE: Login Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gray-50/50">
+                <div className="w-full max-w-md bg-white p-8 md:p-10 rounded-3xl shadow-xl shadow-gray-200/50 border border-white">
+
+                    {/* Back Link */}
+                    <Link to="/select-role" className="inline-flex items-center text-sm text-gray-400 hover:text-blue-600 mb-8 transition-colors group">
+                        <ArrowLeft size={16} className="mr-1 group-hover:-translate-x-1 transition-transform" />
+                        Change Role
+                    </Link>
+
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign in</h2>
+                        <p className="text-gray-500">Please enter your details to continue.</p>
+                    </div>
+
+                    {/* Error Message */}
+                    {error && (
+                        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 animate-pulse">
+                            <div className="w-1 h-1 bg-red-500 rounded-full mt-2"></div>
+                            <p className="text-sm text-red-600 font-medium">{error}</p>
                         </div>
-                    </div>
+                    )}
 
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                                placeholder="Enter password"
-                                required
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                            >
-                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                            </button>
+                    <form onSubmit={handleLogin} className="space-y-6">
+
+                        {/* Input 1: ID */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">{config.label}</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-600 transition-colors">
+                                    <User size={20} />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={inputId}
+                                    onChange={(e) => setInputId(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 focus:bg-white outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+                                    placeholder={config.placeholder}
+                                    required
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition flex justify-center items-center gap-2 disabled:bg-blue-400"
-                    >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : 'Secure Login'}
-                    </button>
-                </form>
+                        {/* Input 2: Password */}
+                        <div>
+                            <div className="flex justify-between items-center mb-2 ml-1">
+                                <label className="block text-sm font-semibold text-gray-700">Password</label>
+                                <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">
+                                    Forgot password?
+                                </a>
+                            </div>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-600 transition-colors">
+                                    <Lock size={20} />
+                                </div>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full pl-11 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 focus:bg-white outline-none transition-all font-medium text-gray-900 placeholder:text-gray-400"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md hover:bg-gray-100"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all transform active:scale-[0.98] shadow-lg shadow-blue-600/20 flex justify-center items-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" size={20} />
+                                    Verifying...
+                                </>
+                            ) : (
+                                'Sign In securely'
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Footer for Mobile */}
+                    <div className="mt-8 text-center lg:hidden">
+                        <p className="text-xs text-gray-400">© 2025 SchoolOS Ecosystem</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
