@@ -4,72 +4,50 @@ const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
   try {
-    // 1. Get data from request body
     const { role, identifier, password } = req.body;
 
-    // 2. Input validation
+    // 🕵️‍♂️ JAASOOS LOG 1: Dekhte hain Frontend se kya aaya
+    console.log("👉 Login Attempt:", { role, identifier, password });
+
     if (!identifier || !password || !role) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Please provide all required fields: identifier, password, and role" 
-      });
+      return res.status(400).json({ success: false, message: "Missing Details" });
     }
 
-    // 3. Normalize the identifier (trim and lowercase for email)
-    const normalizedIdentifier = identifier.trim();
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedIdentifier);
-    
-    // 4. Build the query based on identifier type
-    const query = { role };
-    
-    if (isEmail) {
-      query.email = normalizedIdentifier.toLowerCase();
-    } else {
-      // For non-email identifiers, check both employeeId and enrollmentId
-      query.$or = [
-        { employeeId: normalizedIdentifier },
-        { enrollmentId: normalizedIdentifier }
-      ];
-    }
+    // User find karo
+    const user = await User.findOne({
+      role: role,
+      $or: [
+        { email: identifier },
+        { employeeId: identifier },
+        { enrollmentId: identifier }
+      ]
+    });
 
-    // 5. Find the user
-    const user = await User.findOne(query).select('+password');
-    
-    // 6. Check if user exists
+    // 🕵️‍♂️ JAASOOS LOG 2: Kya User Database me mila?
     if (!user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Invalid credentials. Please check your role and identifier." 
-      });
+      console.log("❌ User Not Found in DB");
+      return res.status(401).json({ success: false, message: "User not found" });
+    }
+    console.log("✅ User Found:", user.email);
+
+    // Password Check
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // 🕵️‍♂️ JAASOOS LOG 3: Password match hua?
+    if (!isMatch) {
+      console.log("❌ Password Mismatch");
+      return res.status(401).json({ success: false, message: "Invalid Password" });
     }
 
-    // 7. Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "Invalid password" 
-      });
-    }
-
-    // 8. Generate JWT token
+    // Token Generate
     const token = jwt.sign(
-      { 
-        id: user._id, 
-        role: user.role, 
-        schoolId: user.schoolId,
-        email: user.email
-      },
+      { id: user._id, role: user.role, schoolId: user.schoolId },
       process.env.JWT_SECRET,
-      { 
-        expiresIn: process.env.JWT_EXPIRES_IN || '1d' 
-      }
+      { expiresIn: '1d' }
     );
 
-    // 9. Remove sensitive data before sending response
-    user.password = undefined;
+    console.log("🎉 Login Successful!");
 
-    // 10. Send success response
     res.status(200).json({
       success: true,
       token,
@@ -78,18 +56,12 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        schoolId: user.schoolId,
-        employeeId: user.employeeId,
-        enrollmentId: user.enrollmentId
+        schoolId: user.schoolId
       }
     });
 
   } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "An error occurred during login. Please try again later.",
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    console.error("🔥 Server Error:", error);
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
   }
 };
