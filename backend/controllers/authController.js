@@ -1,75 +1,61 @@
-const jwt = require('jsonwebtoken');
-const Tenant = require('../models/Tenant');
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const login = async (req, res) => {
-  const { role, identifier, password } = req.body;
-
+exports.login = async (req, res) => {
   try {
-    let user = null;
+    // 1. Frontend se data lo (Frontend sends 'identifier', not just 'email')
+    const { role, identifier, password } = req.body;
 
-    // ===================================================
-    // 🛠️ HARDCODED DEMO CREDENTIALS (Testing ke liye)
-    // ===================================================
-
-    // 1. Super Admin Demo
-    if (role === 'super-admin' && identifier === 'admin@saas.com' && password === 'admin123') {
-      user = { _id: '1', name: 'Super Admin', role: 'super-admin' };
+    // 2. Validation
+    if (!identifier || !password || !role) {
+      return res.status(400).json({ success: false, message: "Please provide ID, Password and Role" });
     }
 
-    // 2. School Principal Demo
-    else if (role === 'school' && identifier === 'principal@school.com' && password === 'school123') {
-      user = { _id: '2', name: 'Galaxy School Principal', role: 'school' };
-    }
+    // 3. User ko dhoondo (Email ya ID check karo based on role)
+    // Hum check karenge ki kya 'identifier' email match karta hai YA phir employeeId/enrollmentId
+    const user = await User.findOne({
+      role: role, // Role match hona zaruri hai
+      $or: [
+        { email: identifier },
+        { employeeId: identifier },
+        { enrollmentId: identifier }
+      ]
+    });
 
-    // 3. Teacher Demo
-    else if (role === 'teacher' && identifier === 'T-2025-001' && password === 'teach123') {
-      user = { _id: '3', name: 'Rahul Sir', role: 'teacher' };
-    }
-
-    // 4. Student Demo
-    // Note: Yahan hum naya Enrollment ID format check kar rahe hain
-    else if (role === 'student' && (identifier === 'DPS-2025-0001' || identifier === 'STD-2025-101') && password === 'student123') {
-      user = { _id: '4', name: 'Arav Sharma', role: 'student' };
-    }
-
-    // ===================================================
-    // 🗄️ REAL DATABASE CHECK (Agar Demo nahi hai to DB check karo)
-    // ===================================================
-
+    // 4. Agar user nahi mila
     if (!user) {
-      if (role === 'school') {
-        const tenant = await Tenant.findOne({ email: identifier });
-        if (tenant && tenant.password === password) {
-          user = tenant;
-        }
-      }
-      // Future mein yahan Student/Teacher DB logic aayega
+      return res.status(401).json({ success: false, message: "User not found with this Role & ID" });
     }
 
-    // --- FINAL RESULT ---
-    if (!user) {
-      return res.status(401).json({ success: false, message: '❌ User not found or Wrong Password' });
+    // 5. Password Check karo
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Invalid Password" });
     }
 
-    // Token Generate
+    // 6. Token banao
     const token = jwt.sign(
-      { id: user._id, role: role },
-      process.env.JWT_SECRET || 'secret123',
+      { id: user._id, role: user.role, schoolId: user.schoolId },
+      process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
-    return res.status(200).json({
+    // 7. Success Response bhejo
+    res.status(200).json({
       success: true,
       token,
-      user,
-      message: 'Login Successful'
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        schoolId: user.schoolId
+      }
     });
 
   } catch (error) {
     console.error("Login Error:", error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
   }
 };
-
-module.exports = { login };
