@@ -16,12 +16,21 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'super-admin'
+    enum: ['super-admin', 'school', 'teacher', 'student'],
+    default: 'student'
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  schoolId: {
+    type: String,
+    default: null
+  },
+  employeeId: {
+    type: String,
+    default: null
+  },
+  enrollmentId: {
+    type: String,
+    default: null
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
