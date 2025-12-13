@@ -4,16 +4,15 @@ const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
   try {
+    console.log("👉 LOGIN HIT:", req.body); // Debug Log
+
     const { role, identifier, password } = req.body;
 
-    // 🕵️‍♂️ JAASOOS LOG 1: Dekhte hain Frontend se kya aaya
-    console.log("👉 Login Attempt:", { role, identifier, password });
-
     if (!identifier || !password || !role) {
-      return res.status(400).json({ success: false, message: "Missing Details" });
+      return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
-    // User find karo
+    // Search by Email OR EmployeeID OR EnrollmentID
     const user = await User.findOne({
       role: role,
       $or: [
@@ -23,31 +22,26 @@ exports.login = async (req, res) => {
       ]
     });
 
-    // 🕵️‍♂️ JAASOOS LOG 2: Kya User Database me mila?
     if (!user) {
-      console.log("❌ User Not Found in DB");
-      return res.status(401).json({ success: false, message: "User not found" });
+      console.log("❌ User query failed for:", identifier);
+      return res.status(404).json({ success: false, message: "User not found in Database" });
     }
-    console.log("✅ User Found:", user.email);
 
-    // Password Check
     const isMatch = await bcrypt.compare(password, user.password);
-
-    // 🕵️‍♂️ JAASOOS LOG 3: Password match hua?
     if (!isMatch) {
-      console.log("❌ Password Mismatch");
-      return res.status(401).json({ success: false, message: "Invalid Password" });
+      console.log("❌ Password wrong for:", user.email);
+      return res.status(401).json({ success: false, message: "Wrong Password" });
     }
 
-    // Token Generate
+    // Token Logic with 1 day expiration
     const token = jwt.sign(
       { id: user._id, role: user.role, schoolId: user.schoolId },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
-    console.log("🎉 Login Successful!");
-
+    console.log("✅ Login successful for:", user.email);
+    
     res.status(200).json({
       success: true,
       token,
@@ -61,7 +55,11 @@ exports.login = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("🔥 Server Error:", error);
-    res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    console.error("🔥 Login Error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Server Error",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
