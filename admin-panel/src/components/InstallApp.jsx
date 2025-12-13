@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 
-const InstallApp = () => {
+const InstallButton = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showButton, setShowButton] = useState(false);
 
@@ -15,26 +15,29 @@ const InstallApp = () => {
         return () => window.removeEventListener('beforeinstallprompt', handler);
     }, []);
 
-    const handleInstall = async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            setShowButton(false);
+    const handleInstallClick = () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                setDeferredPrompt(null);
+                setShowButton(false);
+            });
         }
-        setDeferredPrompt(null);
     };
 
     if (!showButton) return null;
 
     return (
         <button
-            onClick={handleInstall}
-            className="fixed bottom-20 right-4 bg-indigo-600 text-white px-4 py-3 rounded-full shadow-xl flex items-center gap-2 z-50 animate-bounce"
+            onClick={handleInstallClick}
+            className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-3 rounded-full shadow-xl flex items-center gap-2 z-50 animate-bounce cursor-pointer"
         >
             <Download size={20} /> Install App
         </button>
     );
 };
 
-export default InstallApp;
+export default InstallButton;

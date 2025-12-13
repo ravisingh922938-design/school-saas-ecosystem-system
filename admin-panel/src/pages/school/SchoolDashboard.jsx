@@ -1,194 +1,162 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-    Users, BookOpen, IndianRupee, Bell, Search, Menu,
-    UserPlus, CalendarCheck, Bus, Library, BedDouble,
-    ShoppingBag, FileText, Settings, Briefcase, Layers,
-    ClipboardList, Megaphone
+    Bell, Search, Menu, User, Home, Layers,
+    ShoppingBag, Calendar, ChevronRight, PlayCircle
 } from 'lucide-react';
 
 const SchoolDashboard = () => {
     const [user, setUser] = useState({ name: 'Principal', schoolId: 'SCHOOL' });
 
     useEffect(() => {
-        // LocalStorage se logged in user ka data nikalo
         const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
+        if (storedUser) setUser(JSON.parse(storedUser));
     }, []);
 
-    // --- ALL 14 APP FEATURES ---
-    const features = [
-        { name: "Admission", icon: <UserPlus size={28} />, color: "text-blue-600", bg: "bg-blue-100", link: "/school/admission" },
-        { name: "Students", icon: <Users size={28} />, color: "text-indigo-600", bg: "bg-indigo-100", link: "/school/students" },
-        { name: "Staff / HR", icon: <Briefcase size={28} />, color: "text-pink-600", bg: "bg-pink-100", link: "/school/staff" },
-        { name: "Attendance", icon: <CalendarCheck size={28} />, color: "text-green-600", bg: "bg-green-100", link: "/school/attendance" },
-        { name: "Fees", icon: <IndianRupee size={28} />, color: "text-emerald-600", bg: "bg-emerald-100", link: "/school/finance" },
-        { name: "Time Table", icon: <ClipboardList size={28} />, color: "text-orange-600", bg: "bg-orange-100", link: "/school/academics" },
-        { name: "Exams", icon: <FileText size={28} />, color: "text-red-600", bg: "bg-red-100", link: "/school/exams" },
-        { name: "Library", icon: <Library size={28} />, color: "text-teal-600", bg: "bg-teal-100", link: "/school/library" },
-        { name: "Transport", icon: <Bus size={28} />, color: "text-yellow-600", bg: "bg-yellow-100", link: "/school/transport" },
-        { name: "Hostel", icon: <BedDouble size={28} />, color: "text-purple-600", bg: "bg-purple-100", link: "/school/hostel" },
-        { name: "Inventory", icon: <Layers size={28} />, color: "text-cyan-600", bg: "bg-cyan-100", link: "/school/inventory" },
-        { name: "Notice Board", icon: <Megaphone size={28} />, color: "text-rose-600", bg: "bg-rose-100", link: "/school/notices" },
-        { name: "School Store", icon: <ShoppingBag size={28} />, color: "text-blue-800", bg: "bg-blue-200", link: "/school/store" },
-        { name: "Settings", icon: <Settings size={28} />, color: "text-gray-600", bg: "bg-gray-200", link: "/school/settings" },
+    // App Features (Grid)
+    const apps = [
+        { name: "Students", icon: "👨‍🎓", color: "bg-blue-100", link: "/school/students" },
+        { name: "Fees", icon: "₹", color: "bg-green-100", link: "/school/finance" },
+        { name: "Store", icon: "🛍️", color: "bg-orange-100", link: "/school/store" },
+        { name: "Exams", icon: "📝", color: "bg-purple-100", link: "/school/exams" },
+        { name: "Staff", icon: "briefcase", color: "bg-pink-100", link: "/school/staff" },
+        { name: "Bus", icon: "🚌", color: "bg-yellow-100", link: "/school/transport" },
+        { name: "Library", icon: "📚", color: "bg-teal-100", link: "/school/library" },
+        { name: "More", icon: "⚡", color: "bg-gray-100", link: "/school/settings" },
     ];
 
     return (
-        // ✨ Colorful Gradient Background (Professional Look)
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans pb-10">
+        <div className="min-h-screen bg-slate-50 pb-24 font-sans select-none">
 
-            {/* Top Header (Glass Effect) */}
-            <header className="bg-white/80 backdrop-blur-md sticky top-0 z-20 px-6 py-4 flex justify-between items-center shadow-sm border-b border-white/50">
+            {/* --- 1. APP HEADER (Unacademy Style) --- */}
+            <div className="bg-white px-5 py-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
                 <div className="flex items-center gap-3">
-                    <Menu className="text-indigo-600 md:hidden" />
+                    <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-indigo-100">
+                        {user.name.charAt(0)}
+                    </div>
                     <div>
-                        <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">
-                            {user.schoolId === 'DPS' ? 'Delhi Public School' : 'Galaxy International'}
-                        </h1>
-                        <p className="text-[10px] text-gray-500 font-bold tracking-wider uppercase bg-white/50 px-2 py-0.5 rounded-full inline-block">CODE: {user.schoolId}</p>
+                        <h1 className="text-sm font-bold text-gray-900 leading-tight">Hi, {user.name} 👋</h1>
+                        <p className="text-[10px] text-gray-500 font-medium">{user.schoolId}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <div className="hidden md:flex bg-white p-2.5 rounded-full text-indigo-500 shadow-sm border border-gray-100 hover:scale-105 transition"><Search size={20} /></div>
-                    <div className="bg-white p-2.5 rounded-full relative text-indigo-600 shadow-sm border border-gray-100 cursor-pointer hover:scale-105 transition">
+                <div className="flex gap-3">
+                    <div className="p-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition">
+                        <Search size={20} />
+                    </div>
+                    <div className="p-2 bg-gray-100 rounded-full text-gray-600 relative hover:bg-gray-200 transition">
                         <Bell size={20} />
-                        <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                        <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                     </div>
-                    <img src={`https://ui-avatars.com/api/?name=${user.name}&background=4F46E5&color=fff`} className="w-10 h-10 rounded-full border-2 border-white shadow-md cursor-pointer hover:scale-105 transition" alt="profile" />
                 </div>
-            </header>
+            </div>
 
-            <div className="p-6 max-w-7xl mx-auto space-y-8">
+            <div className="p-5 space-y-6">
 
-                {/* 1. Welcome Section */}
-                <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-                    <div>
-                        <h2 className="text-3xl font-extrabold text-slate-800">Hello, {user.name} 👋</h2>
-                        <p className="text-slate-500 font-medium">Here is what’s happening in your school today.</p>
+                {/* --- 2. HERO BANNER (PW Style) --- */}
+                <div className="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-5 text-white shadow-xl shadow-indigo-200 relative overflow-hidden">
+                    <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-4 translate-y-4">
+                        <Layers size={120} />
                     </div>
-                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-indigo-200 transition transform active:scale-95 flex items-center gap-2">
-                        <UserPlus size={20} /> New Admission
+                    <p className="text-xs font-medium text-indigo-100 uppercase tracking-wide mb-1">Updates</p>
+                    <h2 className="text-2xl font-bold mb-2">School Annual Function</h2>
+                    <p className="text-sm text-indigo-100 mb-4 opacity-90">Registration closing soon. Check details.</p>
+                    <button className="bg-white text-indigo-600 px-4 py-2 rounded-lg text-xs font-bold shadow-sm active:scale-95 transition">
+                        View Details
                     </button>
                 </div>
 
-                {/* 2. Three Main Stats Cards (Gradient & Glassmorphism) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                    {/* Students Card */}
-                    <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-2xl shadow-xl shadow-blue-200 text-white relative overflow-hidden group cursor-pointer">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition duration-500"></div>
-                        <div className="flex justify-between items-start relative z-10">
-                            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm"><Users size={24} /></div>
-                            <span className="bg-white/20 text-xs px-2 py-1 rounded-lg font-bold">Total</span>
-                        </div>
-                        <div className="mt-4 relative z-10">
-                            <h3 className="text-4xl font-black">1,240</h3>
-                            <p className="text-blue-100 text-sm mt-1 font-medium">Active Students</p>
-                        </div>
+                {/* --- 3. QUICK STATS (Horizontal Scroll) --- */}
+                <div>
+                    <div className="flex justify-between items-center mb-3 px-1">
+                        <h3 className="font-bold text-gray-800">Overview</h3>
+                        <span className="text-xs text-indigo-600 font-bold">View Report</span>
                     </div>
-
-                    {/* Fees Card */}
-                    <div className="bg-gradient-to-r from-emerald-500 to-teal-500 p-6 rounded-2xl shadow-xl shadow-teal-200 text-white relative overflow-hidden group cursor-pointer">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition duration-500"></div>
-                        <div className="flex justify-between items-start relative z-10">
-                            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm"><IndianRupee size={24} /></div>
-                            <span className="bg-white/20 text-xs px-2 py-1 rounded-lg font-bold">+12%</span>
-                        </div>
-                        <div className="mt-4 relative z-10">
-                            <h3 className="text-4xl font-black">₹ 4.5 L</h3>
-                            <p className="text-emerald-100 text-sm mt-1 font-medium">Collected This Month</p>
-                        </div>
-                    </div>
-
-                    {/* Staff Card */}
-                    <div className="bg-gradient-to-r from-violet-500 to-purple-500 p-6 rounded-2xl shadow-xl shadow-purple-200 text-white relative overflow-hidden group cursor-pointer">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition duration-500"></div>
-                        <div className="flex justify-between items-start relative z-10">
-                            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm"><BookOpen size={24} /></div>
-                            <span className="bg-white/20 text-xs px-2 py-1 rounded-lg font-bold">Today</span>
-                        </div>
-                        <div className="mt-4 relative z-10">
-                            <h3 className="text-4xl font-black">96%</h3>
-                            <p className="text-purple-100 text-sm mt-1 font-medium">Staff Attendance</p>
-                        </div>
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                        {[
+                            { label: "Students", val: "1,240", color: "text-blue-600", bg: "bg-blue-50" },
+                            { label: "Revenue", val: "₹4.5L", color: "text-green-600", bg: "bg-green-50" },
+                            { label: "Staff", val: "96%", color: "text-purple-600", bg: "bg-purple-50" }
+                        ].map((stat, i) => (
+                            <div key={i} className={`min-w-[110px] p-4 rounded-xl border border-gray-100 shadow-sm ${stat.bg}`}>
+                                <h4 className={`text-xl font-extrabold ${stat.color}`}>{stat.val}</h4>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase mt-1">{stat.label}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* 3. APP LAUNCHER GRID (Mobile Style Icons) */}
+                {/* --- 4. EXPLORE GRID (The App Icons) --- */}
                 <div>
-                    <h3 className="text-slate-700 font-bold mb-6 flex items-center gap-2">
-                        <div className="w-1 h-6 bg-indigo-600 rounded-full"></div>
-                        Modules & Apps
-                    </h3>
-
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-6">
-                        {features.map((item, index) => (
-                            <Link to={item.link} key={index} className="group flex flex-col items-center text-center cursor-pointer">
-
-                                {/* Big Icon Box (Squircle Shape) */}
-                                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${item.bg} ${item.color} rounded-[1.5rem] flex items-center justify-center shadow-sm border border-white transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:-translate-y-1`}>
-                                    {item.icon}
+                    <h3 className="font-bold text-gray-800 mb-4 px-1">Explore</h3>
+                    <div className="grid grid-cols-4 gap-y-6 gap-x-2">
+                        {apps.map((app, idx) => (
+                            <Link to={app.link} key={idx} className="flex flex-col items-center gap-2 active:scale-95 transition-transform duration-100">
+                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-sm ${app.color}`}>
+                                    {app.icon === 'briefcase' ? <Layers size={24} className="text-pink-600" /> : app.icon}
                                 </div>
-
-                                {/* Name Below */}
-                                <span className="mt-3 text-xs sm:text-sm font-semibold text-gray-600 group-hover:text-indigo-700 transition-colors">
-                                    {item.name}
+                                <span className="text-[11px] font-medium text-gray-600 text-center leading-tight">
+                                    {app.name}
                                 </span>
-
                             </Link>
                         ))}
                     </div>
                 </div>
 
-                {/* 4. Widgets Grid (Defaulters & Birthdays) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Fee Defaulters */}
-                    <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl shadow-sm border border-white hover:shadow-md transition">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="font-bold text-gray-800 flex items-center gap-2">
-                                <div className="w-2 h-2 bg-red-500 rounded-full"></div> Fee Defaulters
-                            </h3>
-                            <button className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full hover:bg-indigo-100 transition">View All</button>
-                        </div>
-                        <ul className="space-y-3">
-                            {[1, 2, 3].map((i) => (
-                                <li key={i} className="flex justify-between items-center p-3 bg-white rounded-xl border border-gray-100 hover:border-red-100 hover:bg-red-50/30 transition cursor-pointer">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-sm">S{i}</div>
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-800">Student {i}</p>
-                                            <p className="text-xs text-gray-500">Class 10-A</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-red-600 font-bold text-sm bg-red-50 px-3 py-1 rounded-lg border border-red-100">₹ 5,000</span>
-                                </li>
-                            ))}
-                        </ul>
+                {/* --- 5. LIVE ACTIVITY (List) --- */}
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-bold text-gray-800">Recent Activity</h3>
+                        <ChevronRight size={16} className="text-gray-400" />
                     </div>
-
-                    {/* Birthdays */}
-                    <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl shadow-sm border border-white hover:shadow-md transition">
-                        <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div> Today's Birthdays
-                        </h3>
-                        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="text-center min-w-[90px] p-3 bg-white rounded-2xl border border-gray-100 hover:border-yellow-200 transition cursor-pointer">
-                                    <div className="w-14 h-14 rounded-full mx-auto mb-2 p-1 border-2 border-dashed border-indigo-200">
-                                        <img src={`https://ui-avatars.com/api/?name=Kid${i}&background=random`} className="w-full h-full rounded-full" />
-                                    </div>
-                                    <p className="text-sm font-bold text-gray-700">Kid {i}</p>
-                                    <button className="text-[10px] mt-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full font-bold shadow-sm hover:shadow-md transition">Wish 🎉</button>
-                                </div>
-                            ))}
+                    <div className="space-y-4">
+                        <div className="flex gap-3 items-center border-b border-gray-50 pb-3">
+                            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                <span className="font-bold text-xs">₹</span>
+                            </div>
+                            <div className="flex-1">
+                                <h4 className="text-sm font-bold text-gray-800">Fees Received</h4>
+                                <p className="text-xs text-gray-500">Rohan (Class 10) paid ₹5,000</p>
+                            </div>
+                            <span className="text-[10px] text-gray-400">2m ago</span>
+                        </div>
+                        <div className="flex gap-3 items-center">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                <User size={18} />
+                            </div>
+                            <div className="flex-1">
+                                <h4 className="text-sm font-bold text-gray-800">New Admission</h4>
+                                <p className="text-xs text-gray-500">Amit Kumar added to Class 5</p>
+                            </div>
+                            <span className="text-[10px] text-gray-400">1h ago</span>
                         </div>
                     </div>
                 </div>
 
             </div>
+
+            {/* --- 6. FIXED BOTTOM NAVIGATION (App Essential) --- */}
+            <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 px-6 py-3 flex justify-between items-center z-40 pb-safe">
+                <div className="flex flex-col items-center gap-1 text-indigo-600">
+                    <Home size={24} fill="currentColor" className="opacity-100" />
+                    <span className="text-[10px] font-bold">Home</span>
+                </div>
+                <div className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 transition">
+                    <PlayCircle size={24} />
+                    <span className="text-[10px] font-medium">Classes</span>
+                </div>
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-indigo-600 p-3 rounded-full shadow-lg shadow-indigo-300 border-4 border-slate-50 cursor-pointer active:scale-90 transition">
+                    <ShoppingBag size={24} className="text-white" />
+                </div>
+                <div className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 transition ml-8">
+                    <Calendar size={24} />
+                    <span className="text-[10px] font-medium">Events</span>
+                </div>
+                <Link to="/school/settings" className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 transition">
+                    <User size={24} />
+                    <span className="text-[10px] font-medium">Profile</span>
+                </Link>
+            </div>
+
         </div>
     );
 };

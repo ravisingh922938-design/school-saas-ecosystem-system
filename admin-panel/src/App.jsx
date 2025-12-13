@@ -1,5 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// Context
+//import { SchoolThemeProvider } from "./context/SchoolThemeContext.jsx";
+
+// Components
+//import InstallButton from './components/InstallButton';
+import GlobalBackButton from './components/GlobalBackButton'; // 👈 IMPORT KAREIN
 
 // Common
 import LandingPage from './pages/common/LandingPage';
@@ -76,7 +82,12 @@ import StudentResults from './pages/student/StudentResults';
 
 function App() {
     return (
+        // <SchoolThemeProvider>
         <BrowserRouter>
+
+
+            {/* 👇 GLOBAL BUTTONS (Har page par rahenge) */}
+            <GlobalBackButton />
             <Routes>
                 {/* Public */}
                 <Route path="/" element={<LandingPage />} />
@@ -159,7 +170,9 @@ function App() {
                 {/* 404 */}
                 <Route path="*" element={<div className="text-center p-10">404 Not Found</div>} />
             </Routes>
+
         </BrowserRouter >
+        //</SchoolThemeProvider>
     );
 }
 
