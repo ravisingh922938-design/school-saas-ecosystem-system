@@ -1,13 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const School = require('../models/School');
 
-// 1. Controller Import Karein (Dhyan dein path sahi ho)
-const { createSchool, loginSchool, getSchools } = require('../controllers/schoolController');
+// Get School Details by School Code (Public or Protected)
+router.get('/details/:schoolId', async (req, res) => {
+    try {
+        const school = await School.findOne({ schoolId: req.params.schoolId });
+        if (!school) return res.status(404).json({ success: false, message: "School not found" });
 
-// 2. Routes Define Karein
-// Check karein ki 'createSchool' function undefined na ho
-router.post('/register', createSchool);
-router.post('/login', loginSchool);
-router.get('/', getSchools);
+        res.status(200).json({ success: true, data: school });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
 
 module.exports = router;

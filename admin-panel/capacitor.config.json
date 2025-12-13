@@ -1,5 +1,9 @@
 {
   "appId": "com.schoolos.app",
   "appName": "SchoolOS",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "url": "https://www.schoolos.co.in",
+    "cleartext": true
+  }
 }
