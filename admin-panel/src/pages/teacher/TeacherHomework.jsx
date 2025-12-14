@@ -1,48 +1,37 @@
 import React from 'react';
-import { Upload, Camera, Link } from 'lucide-react';
+import { Plus, FileText, Clock } from 'lucide-react';
 
 const TeacherHomework = () => {
     return (
-        <div className="p-5">
-            <h2 className="text-xl font-bold text-gray-800 mb-6">Create Homework</h2>
+        <div className="p-5 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-
-                {/* Class Selector */}
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Select Class</label>
-                    <select className="w-full p-3 bg-gray-50 rounded-xl border-none outline-none font-medium">
-                        <option>Class 10-A (Maths)</option>
-                        <option>Class 9-B (Science)</option>
-                    </select>
-                </div>
-
-                {/* Title */}
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Title</label>
-                    <input type="text" placeholder="e.g. Algebra Worksheet 2" className="w-full p-3 bg-gray-50 rounded-xl border-none outline-none" />
-                </div>
-
-                {/* Description */}
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">Instructions</label>
-                    <textarea rows="3" placeholder="Write details here..." className="w-full p-3 bg-gray-50 rounded-xl border-none outline-none"></textarea>
-                </div>
-
-                {/* Attachments */}
-                <div className="flex gap-4">
-                    <button className="flex-1 py-3 bg-blue-50 text-blue-600 rounded-xl font-bold flex flex-col items-center gap-1">
-                        <Camera size={20} /> <span className="text-xs">Camera</span>
-                    </button>
-                    <button className="flex-1 py-3 bg-purple-50 text-purple-600 rounded-xl font-bold flex flex-col items-center gap-1">
-                        <Upload size={20} /> <span className="text-xs">Upload PDF</span>
-                    </button>
-                </div>
-
-                <button className="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-green-200">
-                    Assign Homework
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-extrabold text-gray-800">Homework 📚</h2>
+                <button className="bg-teal-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1 active:scale-95 transition">
+                    <Plus size={16} /> Create New
                 </button>
+            </div>
 
+            <div className="space-y-4">
+                {[
+                    { class: "10-A", sub: "Maths", title: "Algebra Ex 4.2", due: "Tomorrow" },
+                    { class: "9-B", sub: "Science", title: "Draw Plant Cell", due: "15 Oct" }
+                ].map((hw, i) => (
+                    <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-teal-50 text-teal-700 text-[10px] font-bold px-3 py-1 rounded-bl-xl">
+                            {hw.class}
+                        </div>
+                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{hw.sub}</h4>
+                        <h3 className="font-bold text-lg text-gray-800 mb-2">{hw.title}</h3>
+
+                        <div className="flex justify-between items-center mt-4 border-t border-gray-50 pt-3">
+                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                                <Clock size={14} /> Due: {hw.due}
+                            </p>
+                            <span className="text-teal-600 text-xs font-bold">View Submissions</span>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

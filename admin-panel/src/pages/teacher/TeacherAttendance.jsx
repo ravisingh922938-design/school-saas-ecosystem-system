@@ -4,62 +4,80 @@ import { Calendar, CheckCircle, XCircle } from 'lucide-react';
 const TeacherAttendance = () => {
     // Dummy Students
     const [students, setStudents] = useState([
-        { id: 1, name: 'Arav Sharma', roll: 21, present: true },
-        { id: 2, name: 'Priya Verma', roll: 22, present: true },
-        { id: 3, name: 'Rohan Das', roll: 23, present: true },
-        { id: 4, name: 'Simran Kaur', roll: 24, present: false }, // Absent
-        { id: 5, name: 'Vikram Singh', roll: 25, present: true },
+        { id: 1, name: "Arav Sharma", roll: 1, status: "P" },
+        { id: 2, name: "Aditi Verma", roll: 2, status: "P" },
+        { id: 3, name: "Rohan Singh", roll: 3, status: "A" },
+        { id: 4, name: "Sneha Gupta", roll: 4, status: "P" },
+        { id: 5, name: "Vikram Malhotra", roll: 5, status: "P" },
     ]);
 
-    const toggleAttendance = (id) => {
-        setStudents(students.map(s => s.id === id ? { ...s, present: !s.present } : s));
+    const toggleStatus = (id) => {
+        setStudents(students.map(std =>
+            std.id === id ? { ...std, status: std.status === "P" ? "A" : "P" } : std
+        ));
     };
 
     return (
-        <div className="p-5">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Mark Attendance</h2>
+        <div className="p-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-            {/* Date & Class Selector */}
-            <div className="bg-white p-4 rounded-2xl shadow-sm mb-6 flex justify-between items-center border border-gray-100">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-extrabold text-gray-800">Attendance 📝</h2>
+                <div className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <Calendar size={14} /> Today, 12 Oct
+                </div>
+            </div>
+
+            {/* Class Selector */}
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex justify-between items-center">
                 <div>
                     <p className="text-xs text-gray-400 font-bold uppercase">Class</p>
                     <h3 className="text-lg font-bold text-gray-800">10 - A</h3>
                 </div>
-                <div className="bg-green-50 text-green-700 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-2">
-                    <Calendar size={16} /> Today
+                <div className="text-right">
+                    <p className="text-xs text-gray-400 font-bold uppercase">Total</p>
+                    <h3 className="text-lg font-bold text-gray-800">{students.length}</h3>
                 </div>
             </div>
 
             {/* Student List */}
-            <div className="space-y-3">
-                {students.map((student) => (
-                    <div key={student.id}
-                        onClick={() => toggleAttendance(student.id)}
-                        className={`p-4 rounded-xl flex justify-between items-center cursor-pointer transition border ${student.present ? 'bg-white border-gray-100' : 'bg-red-50 border-red-100'}`}>
-
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500">
-                                {student.roll}
+            <div className="space-y-3 mb-20">
+                {students.map((std) => (
+                    <div key={std.id}
+                        onClick={() => toggleStatus(std.id)}
+                        className={`flex justify-between items-center p-4 rounded-2xl border-2 cursor-pointer transition-all active:scale-95 ${std.status === "P"
+                            ? 'bg-white border-teal-100 shadow-sm'
+                            : 'bg-red-50 border-red-100'
+                            }`}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
+                                {std.roll}
                             </div>
                             <div>
-                                <h4 className={`font-bold ${student.present ? 'text-gray-800' : 'text-red-700'}`}>{student.name}</h4>
-                                <p className="text-xs text-gray-400">Roll No. {student.roll}</p>
+                                <h4 className={`font-bold ${std.status === "P" ? 'text-gray-800' : 'text-red-800'}`}>{std.name}</h4>
+                                <p className="text-xs text-gray-400">Roll No. {std.roll}</p>
                             </div>
                         </div>
 
-                        <div className="text-2xl">
-                            {student.present
-                                ? <CheckCircle className="text-green-500" size={28} fill="#dcfce7" />
-                                : <XCircle className="text-red-500" size={28} fill="#fee2e2" />
-                            }
+                        <div>
+                            {std.status === "P" ? (
+                                <CheckCircle size={28} className="text-teal-500 fill-teal-50" />
+                            ) : (
+                                <XCircle size={28} className="text-red-500 fill-red-50" />
+                            )}
                         </div>
                     </div>
                 ))}
             </div>
 
-            <button className="w-full mt-6 bg-green-600 text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-green-200">
-                Submit Attendance
-            </button>
+            {/* Submit Button */}
+            <div className="fixed bottom-20 left-0 w-full px-6">
+                <button className="w-full bg-teal-600 text-white py-4 rounded-2xl font-bold shadow-xl shadow-teal-200 active:scale-95 transition">
+                    Submit Attendance ({students.filter(s => s.status === 'P').length}/{students.length})
+                </button>
+            </div>
+
         </div>
     );
 };

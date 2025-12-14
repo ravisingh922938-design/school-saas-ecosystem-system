@@ -68,6 +68,12 @@ import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import TeacherAttendance from './pages/teacher/TeacherAttendance';
 import TeacherHomework from './pages/teacher/TeacherHomework';
 import TeacherProfile from './pages/teacher/TeacherProfile';
+import TeacherLeaves from './pages/teacher/TeacherLeaves';
+import TeacherStudents from './pages/teacher/TeacherStudents';
+import TeacherLMS from './pages/teacher/TeacherLMS';
+import TeacherRemarks from './pages/teacher/TeacherRemarks';
+import TeacherGallery from './pages/teacher/TeacherGallery';
+import TeacherNotices from './pages/teacher/TeacherNotices';
 
 // Student App
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -83,6 +89,13 @@ import StudentLeave from './pages/student/StudentLeave';
 import StudentLMS from './pages/student/StudentLMS';
 import StudentMaterials from './pages/student/StudentMaterials';
 import StudentTest from './pages/student/StudentTest';
+import StudentAI from './pages/student/StudentAI';
+import StudentIDCard from './pages/student/StudentIDCard';
+import StudentLeaderboard from './pages/student/StudentLeaderboard';
+import StudentProfile from './pages/student/StudentProfile';
+import StudentNotifications from './pages/student/StudentNotifications';
+import StudentCalendar from './pages/student/StudentCalendar';
+
 
 
 function App() {
@@ -158,6 +171,14 @@ function App() {
                     <Route path="attendance" element={<TeacherAttendance />} />
                     <Route path="homework" element={<TeacherHomework />} />
                     <Route path="profile" element={<TeacherProfile />} />
+                    <Route path="leaves" element={<TeacherLeaves />} />
+                    <Route path="students" element={<TeacherStudents />} />
+                    <Route path="timetable" element={<TeacherTimeTable />} />
+                    <Route path="lms" element={<TeacherLMS />} />
+                    <Route path="paper-gen" element={<TeacherPaperGen />} />
+                    <Route path="remarks" element={<TeacherRemarks />} />
+                    <Route path="gallery" element={<TeacherGallery />} />
+                    <Route path="notices" element={<TeacherNotices />} />
                 </Route>
 
                 {/* Student App (Mobile) */}
@@ -177,6 +198,12 @@ function App() {
                         <Route path="lms" element={<StudentLMS />} />
                         <Route path="materials" element={<StudentMaterials />} />
                         <Route path="test" element={<StudentTest />} />
+                        <Route path="ai-tutor" element={<StudentAI />} />
+                        <Route path="id-card" element={<StudentIDCard />} />
+                        <Route path="leaderboard" element={<StudentLeaderboard />} />
+                        <Route path="profile" element={<StudentProfile />} />
+                        <Route path="notifications" element={<StudentNotifications />} />
+                        <Route path="calendar" element={<StudentCalendar />} />
                     </Route>
                 </Route>
 
