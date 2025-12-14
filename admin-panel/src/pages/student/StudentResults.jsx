@@ -1,27 +1,47 @@
 import React from 'react';
-import { Download } from 'lucide-react';
+import { Trophy, TrendingUp, Calendar, Download } from 'lucide-react';
 
 const StudentResults = () => {
     return (
-        <div className="p-4">
-            <h2 className="text-xl font-bold text-gray-800 mb-6">Exam Results</h2>
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 text-center mb-6">
-                <div className="w-32 h-32 mx-auto rounded-full border-8 border-orange-100 flex items-center justify-center mb-4">
-                    <div className="text-center">
-                        <div className="text-3xl font-extrabold text-orange-600">85%</div>
-                        <div className="text-[10px] text-gray-400 font-bold uppercase">Grade A</div>
-                    </div>
+        <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-2xl font-extrabold text-gray-800 mb-6 px-1">My Performance 🏆</h2>
+
+            {/* Result Card */}
+            <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2rem] p-6 text-white shadow-xl shadow-indigo-200 mb-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                <div className="text-center">
+                    <p className="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-2">LAST EXAM (MID-TERM)</p>
+                    <h1 className="text-6xl font-black">92%</h1>
+                    <p className="text-sm font-medium mt-2 opacity-90">Grade: A+ | Rank: 3rd</p>
                 </div>
-                <div className="grid grid-cols-3 gap-4 border-t pt-4 text-xs">
-                    <div><p className="text-gray-400">Total</p><p className="font-bold">425/500</p></div>
-                    <div><p className="text-gray-400">Rank</p><p className="font-bold">5th</p></div>
-                    <div><p className="text-gray-400">Result</p><p className="text-green-600 font-bold">PASS</p></div>
-                </div>
+                <button className="mt-6 w-full bg-white/20 backdrop-blur-md py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/30 transition">
+                    <Download size={16} /> Download Report Card
+                </button>
             </div>
-            <button className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2">
-                <Download size={18} /> Download Report Card
-            </button>
+
+            {/* Subject Marks */}
+            <h3 className="font-bold text-gray-800 mb-4 px-1">Subject Breakdown</h3>
+            <div className="space-y-4">
+                {[
+                    { sub: "Mathematics", marks: 95, color: "bg-blue-500" },
+                    { sub: "Science", marks: 88, color: "bg-green-500" },
+                    { sub: "English", marks: 91, color: "bg-orange-500" },
+                    { sub: "History", marks: 85, color: "bg-pink-500" }
+                ].map((item, idx) => (
+                    <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                        <div className="flex justify-between mb-2">
+                            <span className="text-sm font-bold text-gray-700">{item.sub}</span>
+                            <span className="text-sm font-bold text-gray-900">{item.marks}/100</span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2.5">
+                            <div className={`h-2.5 rounded-full ${item.color}`} style={{ width: `${item.marks}%` }}></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
         </div>
     );
 };
+
 export default StudentResults;

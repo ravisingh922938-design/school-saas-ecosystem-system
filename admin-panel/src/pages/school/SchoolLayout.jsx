@@ -6,7 +6,10 @@ import {
     Briefcase, CalendarCheck, FileText, Library, BedDouble,
     Layers, Megaphone, ClipboardList
 } from 'lucide-react';
-import { useSchoolTheme } from '../../context/SchoolThemeContext';
+//import { useSchoolTheme } from '/src/context/SchoolThemeContext';
+//import InstallButton from '/src/components/InstallButton';
+//import GlobalBackButton from '/src/components/GlobalBackButton';
+//import ModulePlaceholder from '/src/components/ModulePlaceholder'; // ✅ NEW
 
 const SchoolLayout = () => {
     const location = useLocation();

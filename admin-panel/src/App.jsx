@@ -1,13 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-// Context
-//import { SchoolThemeProvider } from "./context/SchoolThemeContext.jsx";
 
-// Components
-//import InstallButton from './components/InstallButton';
-import GlobalBackButton from './components/GlobalBackButton'; // 👈 IMPORT KAREIN
+// ... baaki pages ke imports waise hi rahenge ...
 
-// Common
 import LandingPage from './pages/common/LandingPage';
 import RoleSelection from './pages/common/RoleSelection';
 import UniversalLogin from './pages/common/UniversalLogin';
@@ -79,15 +74,21 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import StudentFees from './pages/student/StudentFees';
 import StudentHomework from './pages/student/StudentHomework';
 import StudentResults from './pages/student/StudentResults';
+import StudentAcademics from './pages/student/StudentAcademics';
+import StudentMenu from './pages/student/StudentMenu';
+import StudentTimeTable from './pages/student/StudentTimeTable';
+import StudentTransport from './pages/student/StudentTransport';
+import StudentLibrary from './pages/student/StudentLibrary';
+import StudentLeave from './pages/student/StudentLeave';
+import StudentLMS from './pages/student/StudentLMS';
+import StudentMaterials from './pages/student/StudentMaterials';
+import StudentTest from './pages/student/StudentTest';
+
 
 function App() {
     return (
-        // <SchoolThemeProvider>
         <BrowserRouter>
 
-
-            {/* 👇 GLOBAL BUTTONS (Har page par rahenge) */}
-            <GlobalBackButton />
             <Routes>
                 {/* Public */}
                 <Route path="/" element={<LandingPage />} />
@@ -165,7 +166,20 @@ function App() {
                     <Route path="fees" element={<StudentFees />} />
                     <Route path="homework" element={<StudentHomework />} />
                     <Route path="results" element={<StudentResults />} />
+                    <Route path="/student" element={<StudentLayout />}>
+                        <Route index element={<StudentDashboard />} />
+                        <Route path="academics" element={<StudentAcademics />} /> {/* Dashboard se link hoga */}
+                        <Route path="menu" element={<StudentMenu />} />
+                        <Route path="timetable" element={<StudentTimeTable />} />
+                        <Route path="transport" element={<StudentTransport />} />
+                        <Route path="library" element={<StudentLibrary />} />
+                        <Route path="leave" element={<StudentLeave />} />
+                        <Route path="lms" element={<StudentLMS />} />
+                        <Route path="materials" element={<StudentMaterials />} />
+                        <Route path="test" element={<StudentTest />} />
+                    </Route>
                 </Route>
+
 
                 {/* 404 */}
                 <Route path="*" element={<div className="text-center p-10">404 Not Found</div>} />
