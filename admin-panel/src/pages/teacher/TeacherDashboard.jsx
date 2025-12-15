@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { CheckSquare, BookOpen, Clock, Calendar, Bell } from 'lucide-react';
+import { Link } from 'react-router-dom';
+// 👇 Yahan 'Home' aur 'Search' add kar diya hai
+import {
+    Bell, Search, CheckSquare, BookOpen, ClipboardList, Calendar,
+    Users, Image, Megaphone, Video, Briefcase, Sparkles,
+    Star, User, Clock, ChevronRight, Home
+} from 'lucide-react';
 
 const TeacherDashboard = () => {
     const [user, setUser] = useState({ name: 'Teacher', employeeId: 'T-000' });
@@ -9,75 +15,143 @@ const TeacherDashboard = () => {
         if (storedUser) setUser(JSON.parse(storedUser));
     }, []);
 
+    // --- 🔥 ALL 12 POWERFUL FEATURES ---
+    const allApps = [
+        // 1. Core Teaching
+        { name: "Attendance", icon: <CheckSquare size={26} />, color: "text-teal-600", bg: "bg-teal-50", link: "/teacher/attendance" },
+        { name: "Smart Class", icon: <Video size={26} />, color: "text-red-600", bg: "bg-red-50", link: "/teacher/lms" }, // Link Fixed
+        { name: "AI Paper Gen", icon: <Sparkles size={26} />, color: "text-violet-600", bg: "bg-violet-50", link: "/teacher/paper-gen" },
+        { name: "Homework", icon: <BookOpen size={26} />, color: "text-blue-600", bg: "bg-blue-50", link: "/teacher/homework" },
+
+        // 2. Management
+        { name: "Marks Entry", icon: <ClipboardList size={26} />, color: "text-purple-600", bg: "bg-purple-50", link: "/teacher/marks" },
+        { name: "Time Table", icon: <Calendar size={26} />, color: "text-indigo-600", bg: "bg-indigo-50", link: "/teacher/timetable" },
+        { name: "Students", icon: <Users size={26} />, color: "text-orange-600", bg: "bg-orange-50", link: "/teacher/students" },
+        { name: "Remarks", icon: <Star size={26} />, color: "text-yellow-600", bg: "bg-yellow-50", link: "/teacher/remarks" },
+
+        // 3. Extras
+        { name: "Gallery", icon: <Image size={26} />, color: "text-pink-600", bg: "bg-pink-50", link: "/teacher/gallery" },
+        { name: "Notices", icon: <Megaphone size={26} />, color: "text-gray-600", bg: "bg-gray-100", link: "/teacher/notices" },
+        { name: "Apply Leave", icon: <Briefcase size={26} />, color: "text-cyan-600", bg: "bg-cyan-50", link: "/teacher/leaves" },
+        { name: "Profile", icon: <User size={26} />, color: "text-slate-600", bg: "bg-slate-200", link: "/teacher/profile" },
+    ];
+
     return (
-        // ✨ Green/Teal Gradient Background
-        <div className="min-h-screen bg-gradient-to-b from-teal-50 to-emerald-50 pb-20 font-sans flex justify-center">
+        <div className="min-h-screen bg-slate-50 pb-24 font-sans select-none">
 
-            <div className="w-full max-w-md min-h-screen relative overflow-hidden shadow-2xl bg-white/50 backdrop-blur-sm">
-
-                {/* Header Section */}
-                <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-6 pt-10 rounded-b-[3rem] text-white shadow-xl relative z-10">
-                    <div className="flex justify-between items-center mb-8">
-                        <div className="flex items-center gap-3">
-                            <img src={`https://ui-avatars.com/api/?name=${user.name}&background=fff&color=0d9488`} className="w-12 h-12 rounded-full border-2 border-teal-200 shadow-md" alt="Teacher" />
-                            <div>
-                                <p className="text-teal-100 text-xs font-bold uppercase tracking-wider">Good Morning,</p>
-                                <h1 className="text-xl font-extrabold">{user.name}</h1>
-                            </div>
-                        </div>
-                        <div className="bg-white/20 p-2.5 rounded-full backdrop-blur-md cursor-pointer hover:bg-white/30 transition">
-                            <Bell size={20} className="text-white" />
-                        </div>
+            {/* --- 1. HEADER --- */}
+            <div className="bg-white px-5 py-4 flex justify-between items-center sticky top-0 z-30 shadow-sm border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-teal-100">
+                        {user.name.charAt(0)}
                     </div>
+                    <div>
+                        <h1 className="text-sm font-bold text-gray-900 leading-tight">Hi, {user.name} 👋</h1>
+                        <p className="text-[10px] text-gray-500 font-medium">ID: {user.employeeId || 'T-2025'}</p>
+                    </div>
+                </div>
+                <div className="p-2 bg-gray-50 rounded-full text-gray-600 relative hover:bg-gray-100 transition active:scale-95 cursor-pointer">
+                    <Bell size={20} />
+                    <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </div>
+            </div>
 
-                    {/* Floating Action Card */}
-                    <div className="bg-white text-gray-800 p-5 rounded-3xl shadow-2xl flex justify-between items-center transform translate-y-8 border-4 border-teal-50">
+            <div className="p-5 space-y-6">
+
+                {/* --- 2. HERO: NEXT CLASS --- */}
+                <div className="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-2xl p-5 text-white shadow-xl shadow-teal-200 relative overflow-hidden">
+                    <div className="absolute right-0 bottom-0 opacity-20 transform translate-x-4 translate-y-4">
+                        <Clock size={120} />
+                    </div>
+                    <div className="relative z-10 flex justify-between items-center">
                         <div>
-                            <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">NEXT CLASS</p>
-                            <h3 className="font-extrabold text-xl text-gray-800">Class 10-A</h3>
-                            <p className="text-xs text-teal-600 font-bold bg-teal-50 px-2 py-1 rounded-md inline-block mt-1">Starts in 10 mins</p>
+                            <p className="text-[10px] font-bold text-teal-100 uppercase tracking-widest mb-1">UPCOMING CLASS</p>
+                            <h2 className="text-2xl font-bold mb-1">Class 10-A</h2>
+                            <p className="text-sm text-teal-100 opacity-90">Mathematics • Room 101</p>
                         </div>
-                        <button className="bg-teal-600 hover:bg-teal-700 text-white p-4 rounded-2xl shadow-lg shadow-teal-600/40 transition active:scale-95">
-                            <CheckSquare size={28} />
-                        </button>
+                        <div className="bg-white/20 backdrop-blur-md p-3 rounded-xl text-center min-w-[70px]">
+                            <span className="block text-xs font-bold text-teal-50">Starts in</span>
+                            <span className="block text-xl font-black">10m</span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Body Content */}
-                <div className="mt-14 p-6">
-                    <h3 className="font-bold text-teal-900 mb-6 flex items-center gap-2 text-lg">
-                        <div className="bg-teal-100 p-2 rounded-lg"><Calendar size={20} className="text-teal-700" /></div>
-                        Today's Schedule
+                {/* --- 3. ALL FEATURES GRID --- */}
+                <div>
+                    <h3 className="font-bold text-gray-800 mb-4 px-1 text-sm flex justify-between items-center">
+                        <span>Teacher Tools</span>
+                        <span className="text-[10px] bg-teal-100 text-teal-700 px-2 py-1 rounded-full">{allApps.length} Apps</span>
                     </h3>
 
-                    <div className="space-y-6 relative">
-                        <div className="absolute left-[3.5rem] top-4 bottom-4 w-0.5 bg-teal-200/50 dashed"></div>
+                    <div className="grid grid-cols-4 gap-y-6 gap-x-2">
+                        {allApps.map((app, idx) => (
+                            <Link to={app.link} key={idx} className="flex flex-col items-center gap-2 active:scale-90 transition-transform duration-200 group">
+                                <div className={`w-14 h-14 rounded-[20px] flex items-center justify-center shadow-sm border border-gray-100 ${app.bg} ${app.color} group-hover:shadow-md transition`}>
+                                    {app.icon}
+                                </div>
+                                <span className="text-[10px] font-bold text-gray-600 text-center leading-tight">
+                                    {app.name}
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
 
-                        {/* Class Items */}
+                {/* --- 4. TIMELINE --- */}
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-bold text-gray-800 text-sm">Today's Schedule</h3>
+                        <Link to="/teacher/timetable" className="text-xs text-teal-600 font-bold flex items-center">View All <ChevronRight size={14} /></Link>
+                    </div>
+                    <div className="space-y-4 pl-2">
                         {[
-                            { time: '09:00', sub: 'Maths', room: '101', color: 'border-blue-500' },
-                            { time: '11:00', sub: 'Science', room: 'Lab 2', color: 'border-purple-500' },
-                            { time: '01:00', sub: 'Lunch', room: 'Break', color: 'border-gray-400 bg-gray-100', isBreak: true }
-                        ].map((item, idx) => (
-                            <div key={idx} className="flex gap-4 relative group">
-                                <div className="text-gray-400 font-bold text-xs w-12 pt-4 text-right group-hover:text-teal-600 transition">{item.time}</div>
-                                <div className={`p-4 rounded-2xl shadow-sm flex-1 border-l-4 transition hover:scale-[1.02] cursor-pointer ${item.isBreak ? 'bg-gray-200/50' : 'bg-white border-gray-100'} ${item.color}`}>
-                                    <h4 className="font-bold text-gray-800">{item.sub}</h4>
-                                    {!item.isBreak && <p className="text-xs text-gray-500 mt-1 flex items-center gap-1"><BookOpen size={12} /> Room {item.room}</p>}
+                            { time: "09:00", sub: "Maths (10-A)", status: "Completed", color: "border-teal-500" },
+                            { time: "11:00", sub: "Physics (9-B)", status: "Up Next", color: "border-blue-500" },
+                        ].map((item, i) => (
+                            <div key={i} className="flex gap-4">
+                                <span className="text-xs font-bold text-gray-400 w-10 pt-1">{item.time}</span>
+                                <div className={`flex-1 p-3 rounded-xl bg-gray-50 border-l-4 ${item.color}`}>
+                                    <h4 className="text-sm font-bold text-gray-800">{item.sub}</h4>
+                                    <p className="text-[10px] text-gray-500">{item.status}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Bottom Nav */}
-                <div className="fixed bottom-4 left-4 right-4 bg-black/80 backdrop-blur-xl text-white p-3 rounded-full shadow-2xl flex justify-around items-center z-50">
-                    <div className="bg-teal-500 p-2 rounded-full"><CheckSquare size={20} /></div>
-                    <BookOpen size={20} className="text-gray-400" />
-                    <Clock size={20} className="text-gray-400" />
+            </div>
+
+            {/* --- 5. BOTTOM NAVIGATION --- */}
+            <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 px-6 py-3 flex justify-between items-center z-40 pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                <div className="flex flex-col items-center gap-1 text-teal-600 cursor-pointer">
+                    <Home size={24} fill="currentColor" className="opacity-100" />
+                    <span className="text-[10px] font-bold">Home</span>
                 </div>
 
+                {/* Smart Class Button */}
+                <Link to="/teacher/lms" className="flex flex-col items-center gap-1 text-gray-400 hover:text-red-600 transition cursor-pointer active:scale-95">
+                    <Video size={24} />
+                    <span className="text-[10px] font-medium">Live</span>
+                </Link>
+
+                {/* Center Action Button */}
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-teal-600 p-3.5 rounded-full shadow-lg shadow-teal-300 border-[6px] border-slate-50 cursor-pointer active:scale-90 transition">
+                    <Link to="/teacher/attendance">
+                        <CheckSquare size={24} className="text-white" />
+                    </Link>
+                </div>
+
+                {/* Paper Gen Button */}
+                <Link to="/teacher/paper-gen" className="flex flex-col items-center gap-1 text-gray-400 hover:text-violet-600 transition cursor-pointer ml-8 active:scale-95">
+                    <Sparkles size={24} />
+                    <span className="text-[10px] font-medium">AI Paper</span>
+                </Link>
+                <Link to="/teacher/profile" className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 transition cursor-pointer active:scale-95">
+                    <User size={24} />
+                    <span className="text-[10px] font-medium">Profile</span>
+                </Link>
             </div>
+
         </div>
     );
 };

@@ -1,100 +1,113 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
     Book, CreditCard, Clock, ChevronRight,
-    Calendar, FileText, Bus, Star, AlertCircle
+    Calendar, FileText, Bus, Star, AlertCircle,
+    Video, Download, Bot, Trophy, QrCode, PlayCircle
 } from 'lucide-react';
 
 const StudentDashboard = () => {
+
+    // --- ALL FEATURES GRID ---
+    const features = [
+        { name: "Live Classes", icon: <Video size={24} />, color: "text-red-600", bg: "bg-red-50", link: "/student/lms" },
+        { name: "Study Material", icon: <Download size={24} />, color: "text-blue-600", bg: "bg-blue-50", link: "/student/materials" },
+        { name: "Online Test", icon: <FileText size={24} />, color: "text-purple-600", bg: "bg-purple-50", link: "/student/test" },
+        { name: "Homework", icon: <Book size={24} />, color: "text-indigo-600", bg: "bg-indigo-50", link: "/student/academics" },
+        { name: "AI Tutor", icon: <Bot size={24} />, color: "text-emerald-600", bg: "bg-emerald-50", link: "/student/ai-tutor" },
+        { name: "Leaderboard", icon: <Trophy size={24} />, color: "text-yellow-600", bg: "bg-yellow-50", link: "/student/leaderboard" },
+        { name: "Time Table", icon: <Calendar size={24} />, color: "text-pink-600", bg: "bg-pink-50", link: "/student/timetable" },
+        { name: "ID Card", icon: <QrCode size={24} />, color: "text-gray-600", bg: "bg-gray-100", link: "/student/id-card" },
+        { name: "Bus Track", icon: <Bus size={24} />, color: "text-orange-600", bg: "bg-orange-50", link: "/student/transport" },
+        { name: "Fees", icon: <CreditCard size={24} />, color: "text-teal-600", bg: "bg-teal-50", link: "/student/fees" },
+    ];
+
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 font-sans pb-6">
 
-            {/* 1. FEE ALERT CARD (Gradient & 3D Feel) */}
-            <div className="bg-gradient-to-r from-red-500 to-pink-600 p-6 rounded-[1.5rem] text-white shadow-xl shadow-red-200 relative overflow-hidden active:scale-[0.98] transition duration-200">
-                {/* Background blobs */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-black opacity-10 rounded-full -ml-10 -mb-10 blur-xl"></div>
+            {/* 1. CONTINUE LEARNING (Course Card like Udemy/PW) */}
+            <div className="bg-gray-900 rounded-[1.5rem] p-5 text-white shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500 opacity-20 rounded-full blur-2xl -mr-10 -mt-10"></div>
 
+                <div className="flex justify-between items-start mb-4 relative z-10">
+                    <div>
+                        <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">RESUME LEARNING</p>
+                        <h3 className="text-lg font-bold">Physics: Laws of Motion</h3>
+                        <p className="text-xs text-gray-400">Chapter 4 • Lecture 03</p>
+                    </div>
+                    <div className="bg-white/20 p-2 rounded-full backdrop-blur-md">
+                        <PlayCircle size={24} className="text-white" />
+                    </div>
+                </div>
+
+                {/* Progress Bar */}
                 <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-4">
-                        <span className="bg-red-700/40 backdrop-blur-md px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                            <AlertCircle size={12} /> Overdue
-                        </span>
-                        <p className="text-xs text-red-100 font-medium">Due: 15 Oct</p>
+                    <div className="flex justify-between text-xs mb-1">
+                        <span className="text-indigo-300">Progress</span>
+                        <span className="font-bold">75%</span>
                     </div>
-
-                    <div className="flex justify-between items-end">
-                        <div>
-                            <p className="text-red-100 text-xs mb-1">Total Pending</p>
-                            <h2 className="text-4xl font-black tracking-tight">₹ 2,500</h2>
-                        </div>
-                        <button className="bg-white text-red-600 px-5 py-2.5 rounded-xl text-xs font-extrabold shadow-lg active:scale-90 transition transform">
-                            PAY NOW
+                    <div className="w-full bg-gray-700 rounded-full h-1.5">
+                        <div className="bg-indigo-500 h-1.5 rounded-full" style={{ width: '75%' }}></div>
+                    </div>
+                    <Link to="/student/lms">
+                        <button className="w-full mt-4 bg-indigo-600 py-2.5 rounded-xl text-xs font-bold shadow-lg active:scale-95 transition">
+                            Continue Watching
                         </button>
-                    </div>
+                    </Link>
                 </div>
             </div>
 
-            {/* 2. QUICK ACTIONS (App Grid) */}
+            {/* 2. ALL FEATURES GRID (4 Columns) */}
             <div>
-                <h3 className="font-bold text-gray-800 text-sm mb-4 px-1">Quick Access</h3>
-                <div className="grid grid-cols-4 gap-4">
-                    {[
-                        { name: "Homework", icon: <Book size={20} />, color: "text-blue-600", bg: "bg-blue-50" },
-                        { name: "Time Table", icon: <Calendar size={20} />, color: "text-purple-600", bg: "bg-purple-50" },
-                        { name: "Bus", icon: <Bus size={20} />, color: "text-yellow-600", bg: "bg-yellow-50" },
-                        { name: "Result", icon: <Star size={20} />, color: "text-green-600", bg: "bg-green-50" },
-                    ].map((item, idx) => (
-                        <div key={idx} className="flex flex-col items-center gap-2 active:scale-90 transition-transform">
-                            <div className={`w-14 h-14 ${item.bg} ${item.color} rounded-[18px] flex items-center justify-center shadow-sm border border-gray-100`}>
+                <h3 className="font-bold text-gray-800 text-sm mb-4 px-1">Explore SchoolOS</h3>
+                <div className="grid grid-cols-4 gap-y-6 gap-x-2">
+                    {features.map((item, idx) => (
+                        <Link to={item.link} key={idx} className="flex flex-col items-center gap-2 active:scale-90 transition-transform">
+                            <div className={`w-14 h-14 ${item.bg} ${item.color} rounded-[20px] flex items-center justify-center shadow-sm border border-gray-50`}>
                                 {item.icon}
                             </div>
-                            <span className="text-[11px] font-medium text-gray-600">{item.name}</span>
-                        </div>
+                            <span className="text-[10px] font-bold text-gray-600 text-center leading-tight">
+                                {item.name}
+                            </span>
+                        </Link>
                     ))}
                 </div>
             </div>
 
-            {/* 3. HOMEWORK LIST (Cards) */}
-            <div>
-                <div className="flex justify-between items-center mb-3 px-1">
-                    <h3 className="font-bold text-gray-800 text-sm">Pending Homework</h3>
-                    <span className="text-orange-600 text-xs font-bold flex items-center bg-orange-50 px-2 py-1 rounded-md active:bg-orange-100 transition">See All <ChevronRight size={14} /></span>
-                </div>
-
-                <div className="space-y-3">
-                    <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 items-center active:bg-gray-50 transition">
-                        <div className="bg-blue-50 p-3 rounded-2xl text-blue-600"><FileText size={20} /></div>
-                        <div className="flex-1">
-                            <h4 className="font-bold text-gray-800 text-sm">Math Exercise 4.2</h4>
-                            <p className="text-xs text-gray-400 mt-0.5 font-medium">Algebra • Due Tomorrow</p>
-                        </div>
-                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            {/* 3. FEE ALERT (Compact) */}
+            <div className="bg-red-50 border border-red-100 p-4 rounded-2xl flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="bg-red-100 p-2 rounded-full text-red-600">
+                        <AlertCircle size={20} />
                     </div>
-
-                    <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 items-center active:bg-gray-50 transition">
-                        <div className="bg-green-50 p-3 rounded-2xl text-green-600"><FileText size={20} /></div>
-                        <div className="flex-1">
-                            <h4 className="font-bold text-gray-800 text-sm">Science Project</h4>
-                            <p className="text-xs text-gray-400 mt-0.5 font-medium">Physics • Due in 2 Days</p>
-                        </div>
+                    <div>
+                        <h4 className="font-bold text-gray-800 text-sm">Fee Pending</h4>
+                        <p className="text-xs text-red-500 font-bold">₹ 2,500 Due</p>
                     </div>
                 </div>
+                <Link to="/student/fees">
+                    <button className="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md active:scale-95 transition">
+                        Pay Now
+                    </button>
+                </Link>
             </div>
 
-            {/* 4. TODAY'S CLASSES (Horizontal Scroll) */}
+            {/* 4. UPCOMING CLASSES (Horizontal Scroll) */}
             <div>
-                <h3 className="font-bold text-gray-800 text-sm mb-3 px-1">Today's Classes</h3>
+                <div className="flex justify-between items-center mb-3 px-1">
+                    <h3 className="font-bold text-gray-800 text-sm">Today's Schedule</h3>
+                    <Link to="/student/timetable" className="text-indigo-600 text-xs font-bold">View All</Link>
+                </div>
                 <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
                     {[
-                        { sub: "English", time: "09:00 AM", room: "101", color: "bg-indigo-50 text-indigo-600" },
+                        { sub: "English", time: "09:00 AM", room: "101", color: "bg-blue-50 text-blue-600" },
                         { sub: "Maths", time: "10:30 AM", room: "Lab", color: "bg-orange-50 text-orange-600" },
                         { sub: "History", time: "12:00 PM", room: "102", color: "bg-rose-50 text-rose-600" }
                     ].map((cls, i) => (
-                        <div key={i} className={`min-w-[120px] p-4 rounded-2xl border border-gray-100 shadow-sm ${cls.color} bg-opacity-50 flex flex-col justify-between h-28`}>
-                            <span className="text-[10px] font-bold bg-white/60 px-2 py-1 rounded-md w-fit backdrop-blur-sm">{cls.time}</span>
+                        <div key={i} className={`min-w-[120px] p-4 rounded-2xl border border-gray-100 shadow-sm ${cls.color} bg-opacity-50 flex flex-col justify-between h-24`}>
+                            <span className="text-[10px] font-bold bg-white/80 px-2 py-1 rounded-md w-fit backdrop-blur-sm">{cls.time}</span>
                             <div>
                                 <h4 className="font-bold text-sm">{cls.sub}</h4>
-                                <p className="text-[10px] opacity-70">Room {cls.room}</p>
                             </div>
                         </div>
                     ))}

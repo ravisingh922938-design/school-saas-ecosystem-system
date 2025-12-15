@@ -6,26 +6,19 @@ const GlobalBackButton = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Yahan wo pages likhein jahan Back Button NAHI dikhna chahiye (Main Pages)
-    const mainPages = [
-        '/',
-        '/select-role',
-        '/super-admin',
-        '/school',
-        '/teacher',
-        '/student'
-    ];
+    // In pages par Back button NAHI dikhana
+    const mainPages = ['/', '/select-role', '/super-admin', '/school', '/teacher', '/student'];
 
-    // Check karein: Agar hum Login page par hain ya Main Page par hain, to button mat dikhao
+    // Agar URL main pages me se ek hai, ya Login page hai
     const isMainPage = mainPages.includes(location.pathname) || location.pathname.includes('/login');
 
     if (isMainPage) return null;
 
     return (
         <button
-            onClick={() => navigate(-1)} // -1 ka matlab: Ek kadam peeche jao
-            className="fixed top-4 left-4 z-50 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-lg border border-gray-200 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
-            style={{ marginTop: 'env(safe-area-inset-top)' }} // Mobile notch ke liye safe area
+            onClick={() => navigate(-1)}
+            className="fixed top-4 left-4 z-50 bg-white/90 backdrop-blur-md p-2 rounded-full shadow-md border border-gray-200 text-gray-700 hover:text-blue-600 active:scale-95 transition-all cursor-pointer"
+            style={{ marginTop: 'env(safe-area-inset-top)' }}
         >
             <ArrowLeft size={24} />
         </button>

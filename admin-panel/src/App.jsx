@@ -1,6 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+// ✅ FIXED IMPORTS (Relative Paths)
+import { SchoolThemeProvider } from './context/SchoolThemeContext';
+
+// Components
+import InstallButton from './components/InstallButton';
+import GlobalBackButton from './components/GlobalBackButton';
+import ModulePlaceholder from './components/ModulePlaceholder';
 // ... baaki pages ke imports waise hi rahenge ...
 
 import LandingPage from './pages/common/LandingPage';
@@ -70,10 +77,12 @@ import TeacherHomework from './pages/teacher/TeacherHomework';
 import TeacherProfile from './pages/teacher/TeacherProfile';
 import TeacherLeaves from './pages/teacher/TeacherLeaves';
 import TeacherStudents from './pages/teacher/TeacherStudents';
-import TeacherLMS from './pages/teacher/TeacherLMS';
 import TeacherRemarks from './pages/teacher/TeacherRemarks';
 import TeacherGallery from './pages/teacher/TeacherGallery';
 import TeacherNotices from './pages/teacher/TeacherNotices';
+import TeacherTimeTable from './pages/teacher/TeacherTimeTable';
+import TeacherPaperGen from './pages/teacher/TeacherPaperGen';
+import TeacherSmartClass from './pages/teacher/TeacherSmartClass';
 
 // Student App
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -95,125 +104,131 @@ import StudentLeaderboard from './pages/student/StudentLeaderboard';
 import StudentProfile from './pages/student/StudentProfile';
 import StudentNotifications from './pages/student/StudentNotifications';
 import StudentCalendar from './pages/student/StudentCalendar';
+import StudentLayout from './pages/student/StudentLayout';
 
 
 
 function App() {
     return (
-        <BrowserRouter>
+        <SchoolThemeProvider>
+            <BrowserRouter>
 
-            <Routes>
-                {/* Public */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/app" element={<SchoolAppEntry />} />
-                <Route path="/portal" element={<SchoolGateway />} />
-                <Route path="/select-role" element={<RoleSelection />} />
-                <Route path="/login/:role" element={<UniversalLogin />} />
+                {/* Global Buttons */}
+                <GlobalBackButton />
+                <InstallButton />
 
-                {/* Super Admin */}
-                <Route path="/super-admin" element={<SuperAdminLayout />}>
-                    <Route index element={<SuperAdminDashboard />} />
-                    <Route path="schools" element={<SchoolManager />} />
-                    <Route path="team" element={<TeamManager />} />
-                    <Route path="subscriptions" element={<SubscriptionManager />} />
-                    <Route path="finance" element={<FinanceManager />} />
-                    <Route path="commission-rules" element={<CommissionSettings />} />
-                    <Route path="support" element={<SupportTickets />} />
-                    <Route path="coupons" element={<Coupons />} />
-                    <Route path="broadcast" element={<Broadcast />} />
-                    <Route path="cms" element={<WebsiteCMS />} />
-                    <Route path="analytics" element={<AnalyticsReports />} />
-                    <Route path="logs" element={<SystemLogs />} />
-                    <Route path="backups" element={<Backups />} />
-                    <Route path="integrations" element={<Integrations />} />
-                    <Route path="settings" element={<GlobalSettings />} />
-                    <Route path="/super-admin/add-school" element={<AddSchool />} />
-                </Route>
+                <Routes>
+                    {/* Public */}
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/app" element={<SchoolAppEntry />} />
+                    <Route path="/portal" element={<SchoolGateway />} />
+                    <Route path="/select-role" element={<RoleSelection />} />
+                    <Route path="/login/:role" element={<UniversalLogin />} />
 
-                {/* School Admin */}
-                <Route path="/school" element={<SchoolLayout />}>
-                    <Route index element={<SchoolDashboard />} />
-                    <Route path="admission" element={<AdmissionForm />} />
-                    <Route path="students" element={<StudentManager />} />
-                    <Route path="staff" element={<StaffManager />} />
-                    <Route path="fees" element={<FeeManager />} />
-                    <Route path="exams" element={<ExamManager />} />
-                    <Route path="transport" element={<TransportManager />} />
-                    <Route path="library" element={<LibraryManager />} />
-                    <Route path="front-office" element={<FrontOffice />} />
-                    <Route path="attendance" element={<AttendanceManager />} />
-                    <Route path="hostel" element={<HostelManager />} />
-                    <Route path="lms" element={<LMSManager />} />
-                    <Route path="communication" element={<CommManager />} />
-                    <Route path="events" element={<EventManager />} />
-                    <Route path="academics" element={<AcademicManager />} />
-                    <Route path="inventory" element={<InventoryManager />} />
-                    <Route path="reports" element={<ReportsManager />} />
-                    <Route path="gate-pass" element={<GatePass />} />
-                    <Route path="settings" element={<SchoolSettings />} />
-                    <Route path="expenses" element={<ExpenseManager />} />
-                    <Route path="promotion" element={<StudentPromotion />} />
-                    <Route path="roles" element={<RoleManager />} />
-                    <Route path="tracking" element={<TransportTracking />} />
-                    <Route path="library-scan" element={<LibraryScanner />} />
-                    <Route path="whatsapp" element={<WhatsAppSender />} />
-                    <Route path="import" element={<BulkImport />} />
-                    <Route path="store" element={<SchoolStore />} />
-                    <Route path="help-desk" element={<SchoolHelpDesk />} />
-                    <Route path="paper-generator" element={<QuestionPaper />} />
-                    <Route path="birthdays" element={<BirthdayWisher />} />
-                    <Route path="backup" element={<DataBackup />} />
-                    <Route path="add-teacher" element={<AddTeacher />} />
-                </Route>
-                {/* Teacher App (Mobile) */}
-                <Route path="/teacher" element={<MobileLayout />}>
-                    <Route index element={<TeacherDashboard />} />
-                    <Route path="attendance" element={<TeacherAttendance />} />
-                    <Route path="homework" element={<TeacherHomework />} />
-                    <Route path="profile" element={<TeacherProfile />} />
-                    <Route path="leaves" element={<TeacherLeaves />} />
-                    <Route path="students" element={<TeacherStudents />} />
-                    <Route path="timetable" element={<TeacherTimeTable />} />
-                    <Route path="lms" element={<TeacherLMS />} />
-                    <Route path="paper-gen" element={<TeacherPaperGen />} />
-                    <Route path="remarks" element={<TeacherRemarks />} />
-                    <Route path="gallery" element={<TeacherGallery />} />
-                    <Route path="notices" element={<TeacherNotices />} />
-                </Route>
-
-                {/* Student App (Mobile) */}
-                <Route path="/student" element={<MobileLayout />}>
-                    <Route index element={<StudentDashboard />} />
-                    <Route path="fees" element={<StudentFees />} />
-                    <Route path="homework" element={<StudentHomework />} />
-                    <Route path="results" element={<StudentResults />} />
-                    <Route path="/student" element={<StudentLayout />}>
-                        <Route index element={<StudentDashboard />} />
-                        <Route path="academics" element={<StudentAcademics />} /> {/* Dashboard se link hoga */}
-                        <Route path="menu" element={<StudentMenu />} />
-                        <Route path="timetable" element={<StudentTimeTable />} />
-                        <Route path="transport" element={<StudentTransport />} />
-                        <Route path="library" element={<StudentLibrary />} />
-                        <Route path="leave" element={<StudentLeave />} />
-                        <Route path="lms" element={<StudentLMS />} />
-                        <Route path="materials" element={<StudentMaterials />} />
-                        <Route path="test" element={<StudentTest />} />
-                        <Route path="ai-tutor" element={<StudentAI />} />
-                        <Route path="id-card" element={<StudentIDCard />} />
-                        <Route path="leaderboard" element={<StudentLeaderboard />} />
-                        <Route path="profile" element={<StudentProfile />} />
-                        <Route path="notifications" element={<StudentNotifications />} />
-                        <Route path="calendar" element={<StudentCalendar />} />
+                    {/* Super Admin */}
+                    <Route path="/super-admin" element={<SuperAdminLayout />}>
+                        <Route index element={<SuperAdminDashboard />} />
+                        <Route path="schools" element={<SchoolManager />} />
+                        <Route path="team" element={<TeamManager />} />
+                        <Route path="subscriptions" element={<SubscriptionManager />} />
+                        <Route path="finance" element={<FinanceManager />} />
+                        <Route path="commission-rules" element={<CommissionSettings />} />
+                        <Route path="support" element={<SupportTickets />} />
+                        <Route path="coupons" element={<Coupons />} />
+                        <Route path="broadcast" element={<Broadcast />} />
+                        <Route path="cms" element={<WebsiteCMS />} />
+                        <Route path="analytics" element={<AnalyticsReports />} />
+                        <Route path="logs" element={<SystemLogs />} />
+                        <Route path="backups" element={<Backups />} />
+                        <Route path="integrations" element={<Integrations />} />
+                        <Route path="settings" element={<GlobalSettings />} />
+                        <Route path="/super-admin/add-school" element={<AddSchool />} />
                     </Route>
-                </Route>
+
+                    {/* School Admin */}
+                    <Route path="/school" element={<SchoolLayout />}>
+                        <Route index element={<SchoolDashboard />} />
+                        <Route path="admission" element={<AdmissionForm />} />
+                        <Route path="students" element={<StudentManager />} />
+                        <Route path="staff" element={<StaffManager />} />
+                        <Route path="fees" element={<FeeManager />} />
+                        <Route path="exams" element={<ExamManager />} />
+                        <Route path="transport" element={<TransportManager />} />
+                        <Route path="library" element={<LibraryManager />} />
+                        <Route path="front-office" element={<FrontOffice />} />
+                        <Route path="attendance" element={<AttendanceManager />} />
+                        <Route path="hostel" element={<HostelManager />} />
+                        <Route path="lms" element={<LMSManager />} />
+                        <Route path="communication" element={<CommManager />} />
+                        <Route path="events" element={<EventManager />} />
+                        <Route path="academics" element={<AcademicManager />} />
+                        <Route path="inventory" element={<InventoryManager />} />
+                        <Route path="reports" element={<ReportsManager />} />
+                        <Route path="gate-pass" element={<GatePass />} />
+                        <Route path="settings" element={<SchoolSettings />} />
+                        <Route path="expenses" element={<ExpenseManager />} />
+                        <Route path="promotion" element={<StudentPromotion />} />
+                        <Route path="roles" element={<RoleManager />} />
+                        <Route path="tracking" element={<TransportTracking />} />
+                        <Route path="library-scan" element={<LibraryScanner />} />
+                        <Route path="whatsapp" element={<WhatsAppSender />} />
+                        <Route path="import" element={<BulkImport />} />
+                        <Route path="store" element={<SchoolStore />} />
+                        <Route path="help-desk" element={<SchoolHelpDesk />} />
+                        <Route path="paper-generator" element={<QuestionPaper />} />
+                        <Route path="birthdays" element={<BirthdayWisher />} />
+                        <Route path="backup" element={<DataBackup />} />
+                        <Route path="add-teacher" element={<AddTeacher />} />
+                    </Route>
+                    {/* Teacher App (Mobile) */}
+                    <Route path="/teacher" element={<MobileLayout />}>
+                        <Route index element={<TeacherDashboard />} />
+                        <Route path="attendance" element={<TeacherAttendance />} />
+                        <Route path="homework" element={<TeacherHomework />} />
+                        <Route path="profile" element={<TeacherProfile />} />
+                        <Route path="leaves" element={<TeacherLeaves />} />
+                        <Route path="students" element={<TeacherStudents />} />
+                        <Route path="timetable" element={<TeacherTimeTable />} />
+                        <Route path="paper-gen" element={<TeacherPaperGen />} />
+                        <Route path="remarks" element={<TeacherRemarks />} />
+                        <Route path="gallery" element={<TeacherGallery />} />
+                        <Route path="notices" element={<TeacherNotices />} />
+                        <Route path="lms" element={<TeacherSmartClass />} />
+                    </Route>
+
+                    {/* Student App (Mobile) */}
+                    <Route path="/student" element={<MobileLayout />}>
+                        <Route path="/student" element={<StudentLayout />}>
+                            <Route index element={<StudentDashboard />} />
+                            <Route path="fees" element={<StudentFees />} />
+                            <Route path="homework" element={<StudentHomework />} />
+                            <Route path="results" element={<StudentResults />} />
+                            <Route index element={<StudentDashboard />} />
+                            <Route path="academics" element={<StudentAcademics />} /> {/* Dashboard se link hoga */}
+                            <Route path="menu" element={<StudentMenu />} />
+                            <Route path="timetable" element={<StudentTimeTable />} />
+                            <Route path="transport" element={<StudentTransport />} />
+                            <Route path="library" element={<StudentLibrary />} />
+                            <Route path="leave" element={<StudentLeave />} />
+                            <Route path="lms" element={<StudentLMS />} />
+                            <Route path="materials" element={<StudentMaterials />} />
+                            <Route path="test" element={<StudentTest />} />
+                            <Route path="ai-tutor" element={<StudentAI />} />
+                            <Route path="id-card" element={<StudentIDCard />} />
+                            <Route path="leaderboard" element={<StudentLeaderboard />} />
+                            <Route path="profile" element={<StudentProfile />} />
+                            <Route path="notifications" element={<StudentNotifications />} />
+                            <Route path="calendar" element={<StudentCalendar />} />
+                        </Route>
+                    </Route>
 
 
-                {/* 404 */}
-                <Route path="*" element={<div className="text-center p-10">404 Not Found</div>} />
-            </Routes>
+                    {/* 404 */}
+                    <Route path="*" element={<div className="text-center p-10">404 Not Found</div>} />
+                </Routes>
 
-        </BrowserRouter >
-        //</SchoolThemeProvider>
+            </BrowserRouter >
+        </SchoolThemeProvider>
     );
 }
 

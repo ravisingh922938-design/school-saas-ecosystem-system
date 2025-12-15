@@ -6,14 +6,16 @@ import {
     Briefcase, CalendarCheck, FileText, Library, BedDouble,
     Layers, Megaphone, ClipboardList
 } from 'lucide-react';
-//import { useSchoolTheme } from '/src/context/SchoolThemeContext';
-//import InstallButton from '/src/components/InstallButton';
-//import GlobalBackButton from '/src/components/GlobalBackButton';
-//import ModulePlaceholder from '/src/components/ModulePlaceholder'; // ✅ NEW
+
+// ✅ CORRECT IMPORT (Folder rename karne ke baad ye chalega)
+// Humne '/src' use kiya hai taaki path ki galti na ho
+import { useSchoolTheme } from '/src/context/SchoolThemeContext';
 
 const SchoolLayout = () => {
     const location = useLocation();
     const isActive = (path) => location.pathname === path;
+
+    // Theme Data Context se nikal rahe hain
     const { theme } = useSchoolTheme();
 
     // Mobile Menu State
@@ -45,7 +47,7 @@ const SchoolLayout = () => {
     return (
         <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
 
-            {/* 1. MOBILE OVERLAY (Blur Background) */}
+            {/* 1. MOBILE OVERLAY */}
             {isMobileMenuOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
@@ -53,7 +55,7 @@ const SchoolLayout = () => {
                 ></div>
             )}
 
-            {/* 2. SIDEBAR (Full Height & Scrollable) */}
+            {/* 2. SIDEBAR */}
             <aside
                 className={`fixed md:static inset-y-0 left-0 z-50 w-64 text-white flex flex-col transition-transform duration-300 transform 
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} 
@@ -115,7 +117,6 @@ const SchoolLayout = () => {
                         </button>
                         <span className="font-bold text-lg text-gray-800 md:hidden">Menu</span>
 
-                        {/* Desktop Tagline */}
                         <div className="hidden md:block">
                             <span className="text-sm font-medium text-gray-500 italic">"{theme.tagline || 'Excellence in Education'}"</span>
                         </div>
@@ -135,7 +136,7 @@ const SchoolLayout = () => {
                     </div>
                 </header>
 
-                {/* Page Content (Scrollable) */}
+                {/* Page Content */}
                 <main className="flex-1 overflow-y-auto bg-slate-50 p-4 md:p-6 pb-24 md:pb-6 relative">
                     <Outlet />
                 </main>

@@ -33,9 +33,9 @@ const InstallButton = () => {
     return (
         <button
             onClick={handleInstallClick}
-            className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-3 rounded-full shadow-xl flex items-center gap-2 z-50 animate-bounce cursor-pointer"
+            className="fixed bottom-20 right-4 md:bottom-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 z-50 animate-bounce font-medium text-sm cursor-pointer hover:bg-blue-700 transition"
         >
-            <Download size={20} /> Install App
+            <Download size={18} /> Install App
         </button>
     );
 };
