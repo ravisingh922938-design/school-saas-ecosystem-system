@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Search, Filter, Plus, CheckCircle, ShoppingCart, X } from 'lucide-react';
+import { ShoppingBag, Search, Plus, CheckCircle, ShoppingCart, X } from 'lucide-react';
+import axios from 'axios';
+
+// API URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const SchoolStore = () => {
     const [activeCategory, setActiveCategory] = useState('All');
@@ -25,6 +29,27 @@ const SchoolStore = () => {
     const addToCart = (product) => {
         setCart([...cart, { ...product, qty: 10 }]); // Default qty 10
         alert(`${product.name} added to Order List!`);
+    };
+
+    const placeOrder = async () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        const orderData = {
+            schoolId: user?.schoolId || 'Unknown',
+            schoolName: user?.name || "Unknown School",
+            items: cart,
+            total: cart.reduce((total, item) => total + (item.price * item.qty), 0)
+        };
+
+        try {
+            await axios.post(`${API_URL}/orders/create`, orderData);
+            alert("✅ Order Placed Successfully! Super Admin will contact you.");
+            setCart([]); // Cart khali karo
+            setShowCart(false);
+        } catch (err) {
+            alert("Failed to place order.");
+            console.error(err);
+        }
     };
 
     return (
@@ -138,7 +163,10 @@ const SchoolStore = () => {
                                     <span>Total</span>
                                     <span>₹{cart.reduce((total, item) => total + (item.price * item.qty), 0)}</span>
                                 </div>
-                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg flex justify-center gap-2 items-center">
+                                <button
+                                    onClick={placeOrder}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg flex justify-center gap-2 items-center"
+                                >
                                     <CheckCircle size={20} /> Place Bulk Order
                                 </button>
                                 <p className="text-xs text-center text-gray-400 mt-2">Invoice will be added to your monthly bill.</p>
@@ -153,4 +181,5 @@ const SchoolStore = () => {
     );
 };
 
+// 👇 YE LINE BAHUT ZARURI HAI
 export default SchoolStore;

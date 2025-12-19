@@ -1,47 +1,89 @@
-import React from 'react';
-import { Trophy, TrendingUp, Calendar, Download } from 'lucide-react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Save, User, Calculator } from 'lucide-react';
 
-const StudentResults = () => {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const TeacherMarks = () => {
+    const [loading, setLoading] = useState(false);
+
+    // Demo Student Selection
+    const [studentId, setStudentId] = useState("DPS-S01"); // Default Student
+    const [marks, setMarks] = useState({ math: "", sci: "", eng: "" });
+
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            const payload = {
+                studentId: studentId, // Teacher select karega (Abhi hardcoded hai demo ke liye)
+                examName: "Final Term Exam",
+                subjects: [
+                    { name: "Mathematics", marks: parseInt(marks.math), total: 100 },
+                    { name: "Science", marks: parseInt(marks.sci), total: 100 },
+                    { name: "English", marks: parseInt(marks.eng), total: 100 }
+                ]
+            };
+
+            await axios.post(`${API_URL}/exams/add`, payload);
+            alert(`✅ Result Uploaded for ${studentId}`);
+            setMarks({ math: "", sci: "", eng: "" }); // Clear form
+
+        } catch (err) {
+            alert("Failed to save marks");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="text-2xl font-extrabold text-gray-800 mb-6 px-1">My Performance 🏆</h2>
+        <div className="p-5 pb-24 min-h-screen bg-slate-50 font-sans">
+            <h2 className="text-2xl font-extrabold text-gray-800 mb-6">Marks Entry 📝</h2>
 
-            {/* Result Card */}
-            <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-[2rem] p-6 text-white shadow-xl shadow-indigo-200 mb-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-                <div className="text-center">
-                    <p className="text-indigo-200 text-xs font-bold uppercase tracking-widest mb-2">LAST EXAM (MID-TERM)</p>
-                    <h1 className="text-6xl font-black">92%</h1>
-                    <p className="text-sm font-medium mt-2 opacity-90">Grade: A+ | Rank: 3rd</p>
+            {/* Student Selector (Simple Input for now) */}
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex items-center gap-3">
+                <div className="bg-orange-100 p-2 rounded-full text-orange-600"><User /></div>
+                <div className="flex-1">
+                    <label className="text-xs font-bold text-gray-400 block">Student ID</label>
+                    <input type="text" value={studentId} onChange={(e) => setStudentId(e.target.value)} className="font-bold text-gray-800 outline-none w-full" />
                 </div>
-                <button className="mt-6 w-full bg-white/20 backdrop-blur-md py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/30 transition">
-                    <Download size={16} /> Download Report Card
-                </button>
             </div>
 
-            {/* Subject Marks */}
-            <h3 className="font-bold text-gray-800 mb-4 px-1">Subject Breakdown</h3>
-            <div className="space-y-4">
-                {[
-                    { sub: "Mathematics", marks: 95, color: "bg-blue-500" },
-                    { sub: "Science", marks: 88, color: "bg-green-500" },
-                    { sub: "English", marks: 91, color: "bg-orange-500" },
-                    { sub: "History", marks: 85, color: "bg-pink-500" }
-                ].map((item, idx) => (
-                    <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                        <div className="flex justify-between mb-2">
-                            <span className="text-sm font-bold text-gray-700">{item.sub}</span>
-                            <span className="text-sm font-bold text-gray-900">{item.marks}/100</span>
+            {/* Marks Form */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-4 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                    <span className="font-bold text-indigo-900">Final Term Exam</span>
+                    <Calculator size={18} className="text-indigo-500" />
+                </div>
+
+                <div className="p-2">
+                    {[
+                        { name: "Mathematics", key: "math", color: "text-blue-600" },
+                        { name: "Science", key: "sci", color: "text-green-600" },
+                        { name: "English", key: "eng", color: "text-pink-600" }
+                    ].map((sub, i) => (
+                        <div key={i} className="flex justify-between items-center p-4 border-b border-gray-50 last:border-0">
+                            <span className={`font-bold ${sub.color}`}>{sub.name}</span>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="number"
+                                    placeholder="00"
+                                    value={marks[sub.key]}
+                                    onChange={(e) => setMarks({ ...marks, [sub.key]: e.target.value })}
+                                    className="w-16 p-2 text-center bg-gray-50 border border-gray-200 rounded-lg font-bold focus:ring-2 focus:ring-teal-500 outline-none"
+                                />
+                                <span className="text-xs text-gray-400">/ 100</span>
+                            </div>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2.5">
-                            <div className={`h-2.5 rounded-full ${item.color}`} style={{ width: `${item.marks}%` }}></div>
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
+            <button onClick={handleSave} disabled={loading} className="w-full mt-6 bg-teal-600 text-white py-4 rounded-xl font-bold shadow-lg active:scale-95 transition flex justify-center items-center gap-2">
+                <Save size={20} /> {loading ? "Saving..." : "Publish Result"}
+            </button>
         </div>
     );
 };
 
-export default StudentResults;
+export default TeacherMarks;

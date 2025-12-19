@@ -9,6 +9,8 @@ const studentRoutes = require('./routes/studentRoutes');
 const superAdminRoutes = require('./routes/superAdminRoutes');
 const schoolRoutes = require('./routes/schoolRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const examRoutes = require('./routes/examRoutes');
 
 // Config
 dotenv.config();
@@ -49,6 +51,8 @@ app.use('/api/students', studentRoutes);
 app.use('/api/super-admin', superAdminRoutes);
 app.use('/api/school-data', schoolRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/exams', examRoutes);
 
 // Root Route
 app.get('/', (req, res) => {

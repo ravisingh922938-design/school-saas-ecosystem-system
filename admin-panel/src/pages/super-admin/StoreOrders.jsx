@@ -1,86 +1,51 @@
-import React, { useState } from 'react';
-import { ArrowLeft, CheckCircle, Clock, Package, Truck, Search } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Package, Truck, CheckCircle } from 'lucide-react';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const StoreOrders = () => {
-    // Dummy Order Data
-    const [orders, setOrders] = useState([
-        { id: "ORD-001", school: "Delhi Public School", item: "500 ID Cards", price: "₹12,500", status: "Pending", date: "15 Oct" },
-        { id: "ORD-002", school: "St. Xavier's", item: "10 Flex Banners", price: "₹4,500", status: "Shipped", date: "14 Oct" },
-        { id: "ORD-003", school: "Ryan Int.", item: "100 Staff T-Shirts", price: "₹35,000", status: "Delivered", date: "12 Oct" },
-    ]);
+    const [orders, setOrders] = useState([]);
 
-    const updateStatus = (id) => {
-        const newStatus = prompt("Enter new status (Pending / Shipped / Delivered):");
-        if (newStatus) {
-            setOrders(orders.map(o => o.id === id ? { ...o, status: newStatus } : o));
-        }
+    useEffect(() => {
+        fetchOrders();
+    }, []);
+
+    const fetchOrders = async () => {
+        const res = await axios.get(`${API_URL}/orders/all`);
+        if (res.data.success) setOrders(res.data.data);
+    };
+
+    const updateStatus = async (id, currentStatus) => {
+        const nextStatus = currentStatus === 'Pending' ? 'Shipped' : 'Delivered';
+        await axios.post(`${API_URL}/orders/update-status`, { id, status: nextStatus });
+        fetchOrders(); // Refresh
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 font-sans">
-
-            {/* Header */}
-            <div className="max-w-6xl mx-auto mb-8 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link to="/super-admin" className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition">
-                        <ArrowLeft size={20} className="text-gray-600" />
-                    </Link>
-                    <div>
-                        <h1 className="text-3xl font-extrabold text-gray-900">Store Orders 🛒</h1>
-                        <p className="text-gray-500">Manage orders placed by schools.</p>
-                    </div>
-                </div>
-                <div className="bg-white px-4 py-2 border border-gray-200 rounded-xl flex items-center gap-2 shadow-sm">
-                    <Search size={18} className="text-gray-400" />
-                    <input type="text" placeholder="Search Order ID..." className="outline-none text-sm" />
-                </div>
-            </div>
-
-            {/* Orders List */}
-            <div className="max-w-6xl mx-auto space-y-4">
+        <div className="p-8 min-h-screen bg-gray-50">
+            <h1 className="text-3xl font-bold mb-6">Store Orders 📦</h1>
+            <div className="space-y-4">
                 {orders.map((order) => (
-                    <div key={order.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4 hover:shadow-md transition">
-
-                        {/* Order Info */}
-                        <div className="flex items-center gap-4 w-full md:w-auto">
-                            <div className={`p-4 rounded-xl ${order.status === 'Delivered' ? 'bg-green-100 text-green-600' :
-                                order.status === 'Shipped' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'
-                                }`}>
-                                <Package size={24} />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 text-lg">{order.item}</h3>
-                                <p className="text-sm text-gray-500 flex items-center gap-2">
-                                    <span className="font-semibold text-indigo-600">{order.school}</span> • {order.date}
-                                </p>
-                                <p className="text-xs text-gray-400 font-mono mt-1">ID: {order.id}</p>
+                    <div key={order._id} className="bg-white p-6 rounded-xl shadow-sm border flex justify-between items-center">
+                        <div>
+                            <h3 className="font-bold text-lg">{order.schoolName}</h3>
+                            <p className="text-sm text-gray-500">Total: ₹{order.total} • Items: {order.items.length}</p>
+                            <div className="text-xs text-gray-400 mt-1">
+                                {order.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
                             </div>
                         </div>
-
-                        {/* Status & Action */}
-                        <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
-                            <div className="text-right">
-                                <p className="text-xl font-bold text-gray-900">{order.price}</p>
-                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                                    order.status === 'Shipped' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
-                                    }`}>
-                                    {order.status}
-                                </span>
-                            </div>
-
-                            <button
-                                onClick={() => updateStatus(order.id)}
-                                className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition"
-                            >
-                                Update
-                            </button>
-                        </div>
-
+                        <button
+                            onClick={() => updateStatus(order._id, order.status)}
+                            className={`px-4 py-2 rounded-lg font-bold text-white text-xs ${order.status === 'Delivered' ? 'bg-green-600' :
+                                order.status === 'Shipped' ? 'bg-blue-600' : 'bg-orange-500'
+                                }`}
+                        >
+                            {order.status} (Tap to Change)
+                        </button>
                     </div>
                 ))}
             </div>
-
         </div>
     );
 };
