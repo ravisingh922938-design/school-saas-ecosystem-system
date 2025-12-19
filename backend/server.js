@@ -1,20 +1,27 @@
-// Database Connection
+// Database Connection with Debugging
 const connectDB = async () => {
   try {
     let dbUrl = process.env.MONGO_URI;
+
+    // 🕵️‍♂️ JAASOOSI LOG (Check karein ki Render ko kya mil raha hai)
+    console.log("------------------------------------------------");
+    console.log("DEBUG: Raw MONGO_URI Type:", typeof dbUrl);
+    console.log("DEBUG: First 15 chars:", JSON.stringify(dbUrl).substring(0, 15));
+    console.log("------------------------------------------------");
 
     if (!dbUrl) {
       console.log('⚠️ No Mongo URI found');
       return;
     }
 
-    // 🛡️ SAFETY FIX: Agar galti se Quotes (" ") ya Space aa jaye to hata do
-    dbUrl = dbUrl.replace(/"/g, '').trim();
+    // Safai Abhiyan: Quotes aur Spaces hatana
+    // Yeh single quote (') aur double quote (") dono hata dega
+    dbUrl = dbUrl.replace(/['"]+/g, '').trim();
 
     await mongoose.connect(dbUrl);
     console.log('✅ MongoDB Connected Successfully');
   } catch (err) {
-    console.log('❌ DB Connection Failed:', err.message);
+    console.log('❌ DB Error:', err.message);
   }
 };
 
