@@ -3,18 +3,24 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-// --- 1. ROUTE IMPORTS (Sahi se import karein) ---
+// --- 1. ROUTE IMPORTS ---
 const authRoutes = require('./routes/authRoutes');
-const studentRoutes = require('./routes/studentRoutes'); // ✅ Ye Missing tha
-const superAdminRoutes = require('./routes/superAdminRoutes'); // ✅ Ise Uncomment kiya
-const schoolRoutes = require('./routes/schoolRoutes'); // ✅ Notices ke liye
+const studentRoutes = require('./routes/studentRoutes');
+const superAdminRoutes = require('./routes/superAdminRoutes');
+const schoolRoutes = require('./routes/schoolRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
 
 // Config
 dotenv.config();
 const app = express();
 
-// Middleware
-app.use(cors({ origin: '*', credentials: true }));
+// 👇 --- CORS FIX (Yahan Sudhar Kiya Hai) --- 👇
+// origin: true ka matlab hai Vercel aur Mobile App dono allow ho jayenge
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Database Connection
@@ -36,8 +42,9 @@ connectDB();
 // --- 2. ROUTES MOUNT KARNA ---
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
-app.use('/api/super-admin', superAdminRoutes); // ✅ Ab Super Admin chalega
-app.use('/api/school-data', schoolRoutes);     // ✅ Ab Notice Board chalega
+app.use('/api/super-admin', superAdminRoutes);
+app.use('/api/school-data', schoolRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 // Root Route (Testing ke liye)
 app.get('/', (req, res) => {
