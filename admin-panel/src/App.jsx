@@ -35,6 +35,7 @@ import TeamManager from './pages/super-admin/TeamManager';
 import Backups from './pages/super-admin/Backups';
 import Integrations from './pages/super-admin/Integrations';
 import AddSchool from './pages/super-admin/AddSchool';
+import StoreOrders from './pages/super-admin/StoreOrders';
 
 // School Admin
 import SchoolLayout from './pages/school/SchoolLayout';
@@ -143,6 +144,7 @@ function App() {
                         <Route path="integrations" element={<Integrations />} />
                         <Route path="settings" element={<GlobalSettings />} />
                         <Route path="/super-admin/add-school" element={<AddSchool />} />
+                        <Route path="/super-admin/orders" element={<StoreOrders />} />
                     </Route>
 
                     {/* School Admin */}

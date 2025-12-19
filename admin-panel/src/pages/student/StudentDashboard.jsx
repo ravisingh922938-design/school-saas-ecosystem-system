@@ -5,6 +5,7 @@ import {
     Calendar, FileText, Bus, Star, AlertCircle,
     Video, Download, Bot, Trophy, QrCode, PlayCircle
 } from 'lucide-react';
+import StudentAttendanceGraph from './StudentAttendanceGraph';
 
 const StudentDashboard = () => {
 
@@ -91,6 +92,12 @@ const StudentDashboard = () => {
                     </button>
                 </Link>
             </div>
+            {/* ... (Features Grid ke niche) ... */}
+
+            {/* 3. ATTENDANCE GRAPH (New Added) */}
+            <StudentAttendanceGraph />
+
+            {/* 4. FEE ALERT (Compact) ... */}
 
             {/* 4. UPCOMING CLASSES (Horizontal Scroll) */}
             <div>
