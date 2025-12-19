@@ -86,6 +86,7 @@ import TeacherNotices from './pages/teacher/TeacherNotices';
 import TeacherTimeTable from './pages/teacher/TeacherTimeTable';
 import TeacherPaperGen from './pages/teacher/TeacherPaperGen';
 import TeacherSmartClass from './pages/teacher/TeacherSmartClass';
+import TeacherMarks from './pages/teacher/TeacherMarks';
 
 // Student App
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -190,6 +191,7 @@ function App() {
                         <Route index element={<TeacherDashboard />} />
                         <Route path="attendance" element={<TeacherAttendance />} />
                         <Route path="homework" element={<TeacherHomework />} />
+                        <Route path="marks" element={<TeacherMarks />} />
                         <Route path="profile" element={<TeacherProfile />} />
                         <Route path="leaves" element={<TeacherLeaves />} />
                         <Route path="students" element={<TeacherStudents />} />

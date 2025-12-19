@@ -1,29 +1,14 @@
 const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema({
+    schoolId: { type: String, required: true }, // e.g. DPS
     name: { type: String, required: true },
-
-    // Naya Enrollment ID Field
-    enrollmentId: {
-        type: String,
-        unique: true,
-        required: true
-    },
-
-    schoolId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tenant',
-        required: true
-    },
-
-    class: { type: String },
-    rollNo: { type: String },
-    fatherName: { type: String },
-    phone: { type: String },
-
-    password: { type: String, default: 'student123' }, // Default password
-
-    createdAt: { type: Date, default: Date.now }
+    rollNo: { type: String, required: true },
+    classId: { type: String, required: true }, // e.g. 10
+    section: { type: String, required: true }, // e.g. A
+    fatherName: String,
+    phone: String,
+    admissionDate: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Student', studentSchema);

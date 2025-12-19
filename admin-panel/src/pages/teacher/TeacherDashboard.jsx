@@ -34,6 +34,7 @@ const TeacherDashboard = () => {
         { name: "Notices", icon: <Megaphone size={26} />, color: "text-gray-600", bg: "bg-gray-100", link: "/teacher/notices" },
         { name: "Apply Leave", icon: <Briefcase size={26} />, color: "text-cyan-600", bg: "bg-cyan-50", link: "/teacher/leaves" },
         { name: "Profile", icon: <User size={26} />, color: "text-slate-600", bg: "bg-slate-200", link: "/teacher/profile" },
+        { name: "Marks Entry", icon: <ClipboardList size={26} />, color: "text-purple-600", bg: "bg-purple-50", link: "/teacher/marks" },
     ];
 
     return (
