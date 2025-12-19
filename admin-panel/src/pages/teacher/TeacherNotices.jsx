@@ -1,36 +1,94 @@
-import React from 'react';
-import { Bell, Calendar, Pin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Bell, Calendar, Pin, AlertCircle, Megaphone } from 'lucide-react';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const TeacherNotices = () => {
+    const [notices, setNotices] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // User Data nikalo
+    const user = JSON.parse(localStorage.getItem('user'));
+    // Fallback: Agar schoolId nahi mila to 'DPS' maan lo (Testing ke liye)
+    const schoolId = user?.schoolId || 'DPS';
+
+    useEffect(() => {
+        const fetchNotices = async () => {
+            try {
+                console.log(`📡 Fetching notices for School ID: ${schoolId}`); // Debug Log
+
+                const res = await axios.get(`${API_URL}/school-data/notice/${schoolId}`);
+
+                if (res.data.success) {
+                    console.log("✅ Notices Found:", res.data.data);
+                    setNotices(res.data.data);
+                }
+            } catch (err) {
+                console.error("❌ Error fetching notices:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchNotices();
+    }, [schoolId]);
+
     return (
-        <div className="p-5 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="p-5 pb-24 min-h-screen bg-slate-50 font-sans select-none">
 
-            <h2 className="text-2xl font-extrabold text-gray-800 mb-6">Notice Board 📢</h2>
-
-            <div className="space-y-4">
-                {/* Urgent Notice */}
-                <div className="bg-red-50 border border-red-100 p-5 rounded-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 bg-red-100 text-red-600 px-3 py-1 rounded-bl-xl text-[10px] font-bold">URGENT</div>
-                    <h3 className="font-bold text-red-900 text-lg mb-1">Staff Meeting</h3>
-                    <p className="text-sm text-red-700 leading-relaxed">All teachers are requested to gather in the Staff Room at 2:00 PM for the Annual Function discussion.</p>
-                    <div className="flex items-center gap-2 mt-3 text-xs text-red-400 font-medium">
-                        <ClockIcon /> Today, 10:00 AM
-                    </div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <h2 className="text-2xl font-extrabold text-gray-900">Notice Board 📢</h2>
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">School Updates</p>
                 </div>
+                <div className="bg-white p-2 rounded-full shadow-sm border border-gray-100">
+                    <Bell size={20} className="text-gray-600" />
+                </div>
+            </div>
 
-                {/* General Notices */}
-                {[
-                    { title: "Holiday Declared", desc: "School will remain closed tomorrow due to heavy rain.", date: "Yesterday" },
-                    { title: "Marks Submission", desc: "Last date to submit Mid-Term marks is 20th Oct.", date: "12 Oct" }
-                ].map((notice, i) => (
-                    <div key={i} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-bold text-gray-800">{notice.title}</h3>
-                            <Pin size={16} className="text-gray-300" />
+            {/* Loading State */}
+            {loading && <p className="text-center text-gray-400 mt-10">Loading updates...</p>}
+
+            {/* Empty State */}
+            {!loading && notices.length === 0 && (
+                <div className="text-center mt-10 opacity-50">
+                    <Megaphone size={48} className="mx-auto text-gray-300 mb-2" />
+                    <p className="text-gray-500">No notices posted yet.</p>
+                    <p className="text-xs text-gray-400">School ID: {schoolId}</p>
+                </div>
+            )}
+
+            {/* List */}
+            <div className="space-y-4">
+                {notices.map((notice) => (
+                    <div key={notice._id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
+
+                        {/* Priority Strip */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${notice.type === 'Urgent' ? 'bg-red-500' :
+                            notice.type === 'Event' ? 'bg-orange-500' : 'bg-blue-500'
+                            }`}></div>
+
+                        <div className="flex justify-between items-start mb-2 pl-3">
+                            <div>
+                                {notice.type === 'Urgent' && (
+                                    <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 w-fit mb-1">
+                                        <AlertCircle size={10} /> URGENT
+                                    </span>
+                                )}
+                                <h3 className="font-bold text-lg text-gray-800 leading-tight">{notice.title}</h3>
+                            </div>
+                            <Pin size={16} className="text-gray-300 transform rotate-45" />
                         </div>
-                        <p className="text-sm text-gray-500 mb-3">{notice.desc}</p>
-                        <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 w-fit px-2 py-1 rounded-md">
-                            <Calendar size={12} /> {notice.date}
+
+                        <p className="text-sm text-gray-600 pl-3 leading-relaxed mb-3">{notice.description}</p>
+
+                        <div className="flex items-center gap-2 pl-3 pt-3 border-t border-gray-50">
+                            <Calendar size={14} className="text-gray-400" />
+                            <span className="text-xs text-gray-400 font-medium">
+                                {new Date(notice.date).toDateString()}
+                            </span>
                         </div>
                     </div>
                 ))}
@@ -39,7 +97,5 @@ const TeacherNotices = () => {
         </div>
     );
 };
-
-const ClockIcon = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>;
 
 export default TeacherNotices;

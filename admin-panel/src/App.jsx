@@ -40,6 +40,7 @@ import StoreOrders from './pages/super-admin/StoreOrders';
 // School Admin
 import SchoolLayout from './pages/school/SchoolLayout';
 import SchoolDashboard from './pages/school/SchoolDashboard';
+import SchoolNotices from './pages/school/SchoolNotices';
 import StudentManager from './pages/school/StudentManager';
 import StaffManager from './pages/school/StaffManager';
 import FeeManager from './pages/school/FeeManager';
@@ -70,6 +71,7 @@ import BirthdayWisher from './pages/school/BirthdayWisher';
 import DataBackup from './pages/school/DataBackup';
 import AdmissionForm from './pages/school/AdmissionForm';
 import AddTeacher from './pages/school/AddTeacher';
+
 
 // Teacher App
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
@@ -153,6 +155,7 @@ function App() {
                         <Route path="admission" element={<AdmissionForm />} />
                         <Route path="students" element={<StudentManager />} />
                         <Route path="staff" element={<StaffManager />} />
+                        <Route path="notices" element={<SchoolNotices />} />
                         <Route path="fees" element={<FeeManager />} />
                         <Route path="exams" element={<ExamManager />} />
                         <Route path="transport" element={<TransportManager />} />
