@@ -1,28 +1,62 @@
-// Database Connection with Debugging
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const mongoose = require('mongoose'); // ✅ Ye line missing thi, isliye error aaya
+
+// --- ROUTE IMPORTS ---
+const authRoutes = require('./routes/authRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const superAdminRoutes = require('./routes/superAdminRoutes');
+const schoolRoutes = require('./routes/schoolRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+
+// Config
+dotenv.config();
+const app = express();
+
+// Middleware
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+app.use(express.json());
+
+// --- DATABASE CONNECTION (Clean Version) ---
 const connectDB = async () => {
   try {
-    let dbUrl = process.env.MONGO_URI;
-
-    // 🕵️‍♂️ JAASOOSI LOG (Check karein ki Render ko kya mil raha hai)
-    console.log("------------------------------------------------");
-    console.log("DEBUG: Raw MONGO_URI Type:", typeof dbUrl);
-    console.log("DEBUG: First 15 chars:", JSON.stringify(dbUrl).substring(0, 15));
-    console.log("------------------------------------------------");
+    const dbUrl = process.env.MONGO_URI;
 
     if (!dbUrl) {
-      console.log('⚠️ No Mongo URI found');
+      console.log('⚠️ No Mongo URI found in .env');
       return;
     }
 
-    // Safai Abhiyan: Quotes aur Spaces hatana
-    // Yeh single quote (') aur double quote (") dono hata dega
-    dbUrl = dbUrl.replace(/['"]+/g, '').trim();
-
+    // Connect using Mongoose
     await mongoose.connect(dbUrl);
     console.log('✅ MongoDB Connected Successfully');
+
   } catch (err) {
-    console.log('❌ DB Error:', err.message);
+    console.log('❌ DB Connection Failed:', err.message);
   }
 };
 
+// Connect to DB
 connectDB();
+
+// --- ROUTES MOUNT ---
+app.use('/api/auth', authRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/super-admin', superAdminRoutes);
+app.use('/api/school-data', schoolRoutes);
+app.use('/api/attendance', attendanceRoutes);
+
+// Root Route
+app.get('/', (req, res) => {
+  res.send('SchoolOS API is Live! 🚀');
+});
+
+// Server Listen
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on Port ${PORT}`);
+});
