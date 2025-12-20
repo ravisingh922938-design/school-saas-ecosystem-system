@@ -11,8 +11,7 @@ const schoolRoutes = require('./routes/schoolRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const examRoutes = require('./routes/examRoutes');
-
-// Config
+const materialRoutes = require('./routes/materialRoutes');
 dotenv.config();
 const app = express();
 
@@ -52,9 +51,8 @@ app.use('/api/super-admin', superAdminRoutes);
 app.use('/api/school-data', schoolRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/exams', examRoutes);
-
-// Root Route
+app.use('/api/exams', examRoutes);// Root Route
+app.use('/api/materials', materialRoutes);
 app.get('/', (req, res) => {
   res.send('SchoolOS API is Live! 🚀');
 });
