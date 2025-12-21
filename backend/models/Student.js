@@ -1,14 +1,23 @@
 const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema({
-    schoolId: { type: String, required: true }, // e.g. DPS
+    schoolId: { type: String, required: true },
     name: { type: String, required: true },
+    enrollmentId: { type: String, required: true, unique: true }, // Search ke liye
     rollNo: { type: String, required: true },
-    classId: { type: String, required: true }, // e.g. 10
-    section: { type: String, required: true }, // e.g. A
+    class: { type: String, required: true }, // Class Name
+    section: { type: String },
     fatherName: String,
     phone: String,
-    admissionDate: { type: Date, default: Date.now }
+
+    // Fees ka hisab (Simple structure)
+    fees: {
+        total: { type: Number, default: 0 },
+        paid: { type: Number, default: 0 },
+        due: { type: Number, default: 0 } // Ye Frontend me dikh raha hai
+    },
+
+    createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Student', studentSchema);

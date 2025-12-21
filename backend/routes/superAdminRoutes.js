@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
+
+// ✅ Controller se teeno functions import karein
 const { authUser, getAllSchools, addSchool } = require('../controllers/superAdminController');
 
-// 👇 Cloudinary Upload Utility Import karein
+// ✅ Cloudinary Upload Import
 const upload = require('../utils/cloudinary');
 
-// 1. Super Admin Login
-router.post('/login', authUser);
+// 1. Login Route
+router.post('/login', authUser); // Agar 'authUser' undefined hoga to error aayega
 
-// 2. Get All Schools
+// 2. Get Schools Route
 router.get('/schools', getAllSchools);
 
-// 3. Add School (With Image Upload Middleware)
-// 'logoFile' wahi naam hai jo Frontend se FormData me aayega
+// 3. Add School Route (With Image)
 router.post('/add-school', upload.single('logoFile'), addSchool);
 
 module.exports = router;

@@ -4,19 +4,14 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const School = require('../models/School');
 
-// --- HELPER: Token Generator ---
+// Token Generator
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-// ==========================================
 // 1. SUPER ADMIN LOGIN
-// ==========================================
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
 
   if (user && (await bcrypt.compare(password, user.password))) {
@@ -24,7 +19,6 @@ const authUser = asyncHandler(async (req, res) => {
       res.status(401);
       throw new Error('Not authorized as Super Admin');
     }
-
     res.json({
       _id: user._id,
       name: user.name,
@@ -38,71 +32,90 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-// ==========================================
-// 2. ADD NEW SCHOOL (With File Upload Logic)
-// ==========================================
-const addSchool = asyncHandler(async (req, res) => {
-  const {
-    schoolName, schoolCode, email, password,
-    themeColor, tagline, address
-  } = req.body;
+// 2. ADD NEW SCHOOL (Crash-Proof Version 🛡️)
+const addSchool = async (req, res) => {
+  try {
+    console.log("👉 ADD SCHOOL REQUEST STARTED...");
 
-  // 1. Check karo School Code pehle se hai ya nahi
-  const existingSchool = await School.findOne({ schoolId: schoolCode });
-  if (existingSchool) {
-    res.status(400);
-    throw new Error("School Code already exists");
-  }
+    const {
+      schoolName, schoolCode, email, password,
+      themeColor, tagline, address
+    } = req.body;
 
-  // 2. LOGO HANDLING (Magic Here ✨)
-  // Agar Cloudinary ne file upload ki hai, to uska URL lo.
-  // Nahi to ek default logo laga do.
-  let logoUrl = "https://cdn-icons-png.flaticon.com/512/1046/1046374.png";
-
-  if (req.file && req.file.path) {
-    logoUrl = req.file.path; // ✅ Secure Cloudinary URL
-  }
-
-  // 3. Principal User Create karo
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newPrincipal = new User({
-    name: "Principal",
-    email: email,
-    password: hashedPassword,
-    role: 'school',
-    schoolId: schoolCode
-  });
-  await newPrincipal.save();
-
-  // 4. School Branding Create karo
-  const newSchool = new School({
-    schoolId: schoolCode,
-    name: schoolName,
-    email: email,
-    branding: {
-      logo: logoUrl, // ✅ Yahan Secure Logo Save hoga
-      primaryColor: themeColor || "#2563eb",
-      secondaryColor: themeColor || "#1e40af",
-      tagline: tagline || "Excellence in Education"
-    },
-    contact: {
-      address: address || ""
+    // 1. Check Duplicate
+    const existingSchool = await School.findOne({ schoolId: schoolCode });
+    if (existingSchool) {
+      return res.status(400).json({ success: false, message: "School Code already exists" });
     }
-  });
-  await newSchool.save();
 
-  res.status(201).json({
-    success: true,
-    message: "School & App Created Successfully!",
-    data: newSchool
-  });
-});
+    // 2. LOGO HANDLING (Safe Mode)
+    let logoUrl = "https://cdn-icons-png.flaticon.com/512/1046/1046374.png"; // Default
 
-// ==========================================
+    try {
+      if (req.file && req.file.path) {
+        logoUrl = req.file.path; // Cloudinary URL
+        console.log("✅ Image Uploaded:", logoUrl);
+      } else {
+        console.log("⚠️ No image file provided, using default logo.");
+      }
+    } catch (imgError) {
+      console.error("❌ Image Upload Failed (Skipping image):", imgError.message);
+      // Image fail hone par bhi hum rukenge nahi, default logo use karenge.
+    }
+
+    // 3. Create Principal User
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newPrincipal = new User({
+      name: "Principal",
+      email: email,
+      password: hashedPassword,
+      role: 'school',
+      schoolId: schoolCode,
+      employeeId: 'ADMIN'
+    });
+
+    await newPrincipal.save();
+    console.log("✅ Principal User Created");
+
+    // 4. Create School Data
+    const newSchool = new School({
+      schoolId: schoolCode,
+      name: schoolName,
+      email: email,
+      branding: {
+        logo: logoUrl,
+        primaryColor: themeColor || "#2563eb",
+        secondaryColor: themeColor || "#1e40af",
+        tagline: tagline || "Excellence in Education"
+      },
+      contact: {
+        address: address || ""
+      }
+    });
+
+    await newSchool.save();
+    console.log("✅ School Created Successfully");
+
+    res.status(201).json({
+      success: true,
+      message: "School Created Successfully!",
+      data: newSchool
+    });
+
+  } catch (error) {
+    // ASLI ERROR PRINT KAREIN
+    console.error("🔥 CRITICAL ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error"
+    });
+  }
+};
+
 // 3. GET ALL SCHOOLS
-// ==========================================
 const getAllSchools = asyncHandler(async (req, res) => {
-  const schools = await School.find({});
+  const schools = await School.find({}).sort({ createdAt: -1 });
   res.status(200).json({ success: true, data: schools });
 });
 

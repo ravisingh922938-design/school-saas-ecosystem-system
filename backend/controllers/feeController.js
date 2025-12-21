@@ -1,75 +1,56 @@
-const asyncHandler = require('express-async-handler');
-// const Razorpay = require('razorpay'); // Moved to paymentController
 const FeeRecord = require('../models/FeeRecord');
-const School = require('../models/School');
-// const crypto = require('crypto'); // Moved to paymentController
+const Student = require('../models/Student');
 
-// Initialize Razorpay (removed)
-// const razorpayInstance = new Razorpay({
-//   key_id: process.env.RAZORPAY_KEY_ID,
-//   key_secret: process.env.RAZORPAY_KEY_SECRET,
-// });
+// 1. Search Student
+exports.searchStudentForFee = async (req, res) => {
+  try {
+    const { schoolId, search } = req.query;
+    const student = await Student.findOne({
+      schoolId,
+      $or: [{ rollNo: search }, { name: search }]
+    });
 
-// @desc    Collect fee (Cash/Card)
-// @route   POST /api/fees/collect
-// @access  Private (School Admin/Teacher)
-const collectFee = asyncHandler(async (req, res) => {
-  const { studentId, amount, paymentMode, schoolId } = req.body;
+    if (!student) return res.status(404).json({ success: false, message: "Student Not Found" });
 
-  if (!studentId || !amount || !paymentMode || !schoolId) {
-    res.status(400);
-    throw new Error('Please add all required fields');
+    // Dummy due amount logic (Real app me database se aayega)
+    const dueAmount = student.dueAmount !== undefined ? student.dueAmount : 2500;
+
+    res.json({ success: true, data: { ...student._doc, dueAmount } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
-
-  const school = await School.findById(schoolId);
-
-  if (!school) {
-    res.status(404);
-    throw new Error('School not found');
-  }
-
-  let surcharge = 0;
-  if (paymentMode === 'Online') {
-    surcharge = school.paymentConfig.surchargeAmount || 20; // Use school's surcharge or default to 20
-  }
-
-  const adminCommission = amount * 0.05; // 5% commission
-
-  const feeRecord = await FeeRecord.create({
-    studentId,
-    schoolId,
-    amount,
-    surcharge,
-    paymentMode,
-    status: 'Paid', // Assuming cash/card payments are instantly paid
-    adminCommission,
-  });
-
-  if (feeRecord) {
-    res.status(201).json(feeRecord);
-  } else {
-    res.status(400);
-    throw new Error('Invalid fee record data');
-  }
-});
-
-// @desc    Create Razorpay order (moved to paymentController)
-// @route   POST /api/fees/createOrder
-// @access  Private (Student/Parent)
-// const createOrder = asyncHandler(async (req, res) => { // Removed
-// ... existing createOrder logic ... // Removed
-// }); // Removed
-
-// @desc    Verify Razorpay payment (moved to paymentController)
-// @route   POST /api/fees/verifyPayment
-// @access  Private (Student/Parent - callback from Razorpay)
-// const verifyPayment = asyncHandler(async (req, res) => { // Removed
-// ... existing verifyPayment logic ... // Removed
-// }); // Removed
-
-module.exports = {
-  collectFee,
-  // createOrder, // Removed
-  // verifyPayment, // Removed
 };
 
+// 2. Collect Fee
+exports.collectFee = async (req, res) => {
+  try {
+    const { schoolId, studentId, amount, mode, studentName, classId } = req.body;
+
+    const newReceipt = new FeeRecord({
+      schoolId, studentId, studentName, classId, amount, mode,
+      receiptNo: `RCP-${Date.now().toString().slice(-6)}`
+    });
+    await newReceipt.save();
+
+    res.json({ success: true, message: "Fee Collected Successfully!" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+// 3. Recent Fees
+exports.getRecentFees = async (req, res) => {
+  try {
+    const fees = await FeeRecord.find({ schoolId: req.params.schoolId }).sort({ date: -1 }).limit(5);
+    res.json({ success: true, data: fees });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+};
+
+// 4. Defaulters
+exports.getDefaulters = async (req, res) => {
+  try {
+    // Dummy logic: Return all students for now
+    const students = await Student.find({ schoolId: req.params.schoolId }).limit(5);
+    res.json({ success: true, data: students });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+};

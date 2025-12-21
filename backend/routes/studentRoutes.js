@@ -1,12 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const { createNotice, getNotices } = require('../controllers/schoolController');
-const { addStudent, getStudentsByClass } = require('../controllers/studentController');
 
-// 👇 Ye routes hone chahiye
-router.post('/notice/add', createNotice);
-router.get('/notice/:schoolId', getNotices);
-router.post('/add', addStudent); // Admission ke liye
-router.get('/list', getStudentsByClass); // Attendance list ke liye
+// Controller se functions import karein
+const {
+    addStudent,
+    getAllStudents,
+    getStudentsByClass,
+    getStudentProfile,
+    getStudentFees,
+    getStudentHomework,
+    getStudentResults
+} = require('../controllers/studentController');
+
+// --- ROUTES DEFINITION ---
+
+// 1. Admission (Add Student)
+router.post('/add', addStudent);
+
+// 2. Get All Students (Principal List)
+router.get('/all', getAllStudents);
+
+// 3. Class Wise List (Teacher Attendance)
+router.get('/list', getStudentsByClass);
+
+// 4. Student App Routes (Mobile App - Dummy)
+router.get('/profile', getStudentProfile);
+router.get('/fees', getStudentFees);
+router.get('/homework', getStudentHomework);
+router.get('/results', getStudentResults);
 
 module.exports = router;

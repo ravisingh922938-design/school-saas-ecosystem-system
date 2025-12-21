@@ -1,40 +1,42 @@
-const Notice = require('../models/Notice');
-const Student = require('../models/Student'); // Is line ko check karein
+const Student = require('../models/Student');
 
-// 1. Create Notice (Principal karega)
-exports.createNotice = async (req, res) => {
-  try {
-    const { schoolId, title, description, type } = req.body;
-    const newNotice = new Notice({ schoolId, title, description, type });
-    await newNotice.save();
-    res.status(201).json({ success: true, message: "Notice Posted!" });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-
-// 2. Get Notices (Teacher/Student dekhenge)
-exports.getNotices = async (req, res) => {
-  try {
-    // Sirf usi school ke notice dikhao jis school ki ID aayi hai
-    const notices = await Notice.find({ schoolId: req.params.schoolId }).sort({ date: -1 });
-    res.status(200).json({ success: true, data: notices });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
-// 1. Add Student (Admission)
+// 1. ADD STUDENT (Admission)
 exports.addStudent = async (req, res) => {
   try {
+    const { schoolId, name, rollNo, classId, section, fatherName, phone } = req.body;
+
+    if (!schoolId || !name || !rollNo || !classId) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    const existingStudent = await Student.findOne({ schoolId, classId, section, rollNo });
+    if (existingStudent) {
+      return res.status(400).json({ success: false, message: "Roll No already exists" });
+    }
+
     const newStudent = new Student(req.body);
     await newStudent.save();
-    res.status(201).json({ success: true, message: "Student Admitted Successfully!" });
+
+    res.status(201).json({ success: true, message: "Student Admitted Successfully!", data: newStudent });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
-// 2. Get Students by Class (For Teacher Attendance)
+// 2. GET ALL STUDENTS (Renamed to match Route)
+exports.getAllStudents = async (req, res) => {
+  try {
+    const { schoolId } = req.query;
+    if (!schoolId) return res.status(400).json({ message: "School ID required" });
+
+    const students = await Student.find({ schoolId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: students });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// 3. GET STUDENTS BY CLASS
 exports.getStudentsByClass = async (req, res) => {
   try {
     const { schoolId, classId, section } = req.query;
@@ -44,3 +46,9 @@ exports.getStudentsByClass = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+// 4. DUMMY FUNCTIONS (Taaki App Crash na ho)
+exports.getStudentProfile = async (req, res) => res.json({ success: true, message: "Profile API" });
+exports.getStudentFees = async (req, res) => res.json({ success: true, message: "Fees API" });
+exports.getStudentHomework = async (req, res) => res.json({ success: true, message: "Homework API" });
+exports.getStudentResults = async (req, res) => res.json({ success: true, message: "Results API" });
