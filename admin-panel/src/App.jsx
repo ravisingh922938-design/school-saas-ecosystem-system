@@ -43,7 +43,6 @@ import SchoolDashboard from './pages/school/SchoolDashboard';
 import SchoolNotices from './pages/school/SchoolNotices';
 import StudentManager from './pages/school/StudentManager';
 import StaffManager from './pages/school/StaffManager';
-import FeeManager from './pages/school/FeeManager';
 import ExamManager from './pages/school/ExamManager';
 import { TransportManager, LibraryManager } from './pages/school/FacilityManager';
 import FrontOffice from './pages/school/FrontOffice';
@@ -65,12 +64,14 @@ import LibraryScanner from './pages/school/LibraryScanner';
 import WhatsAppSender from './pages/school/WhatsAppSender';
 import BulkImport from './pages/school/BulkImport';
 import SchoolStore from './pages/school/SchoolStore';
+import FeeCollection from './pages/school/FeeCollection';
 import SchoolHelpDesk from './pages/school/SchoolHelpDesk';
 import QuestionPaper from './pages/school/QuestionPaper';
 import BirthdayWisher from './pages/school/BirthdayWisher';
 import DataBackup from './pages/school/DataBackup';
 import AdmissionForm from './pages/school/AdmissionForm';
 import AddTeacher from './pages/school/AddTeacher';
+
 
 
 // Teacher App
@@ -157,7 +158,6 @@ function App() {
                         <Route path="students" element={<StudentManager />} />
                         <Route path="staff" element={<StaffManager />} />
                         <Route path="notices" element={<SchoolNotices />} />
-                        <Route path="fees" element={<FeeManager />} />
                         <Route path="exams" element={<ExamManager />} />
                         <Route path="transport" element={<TransportManager />} />
                         <Route path="library" element={<LibraryManager />} />
@@ -180,6 +180,7 @@ function App() {
                         <Route path="whatsapp" element={<WhatsAppSender />} />
                         <Route path="import" element={<BulkImport />} />
                         <Route path="store" element={<SchoolStore />} />
+                        <Route path="finance" element={<FeeCollection />} />
                         <Route path="help-desk" element={<SchoolHelpDesk />} />
                         <Route path="paper-generator" element={<QuestionPaper />} />
                         <Route path="birthdays" element={<BirthdayWisher />} />

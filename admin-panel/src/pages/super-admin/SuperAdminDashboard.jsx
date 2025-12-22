@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     DollarSign, Building, Users, Activity, LogOut, Plus,
-    Trash2, Menu, X, Bell, Search, Layers, ChevronRight, ShoppingBag, Upload
+    Trash2, Menu, X, Bell, Search, Layers, ShoppingBag, Upload
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -15,18 +15,19 @@ const SuperAdminDashboard = () => {
     const [loading, setLoading] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // Form State (Complete)
+    // ✅ FORM STATE (Logo File ke sath)
     const [formData, setFormData] = useState({
         schoolName: '',
         schoolCode: '',
         email: '',
         password: '',
-        themeColor: '#2563eb',
-        logoFile: null, // File Object
+        themeColor: '#2563eb', // Default Blue
         tagline: '',
-        address: ''
+        address: '',
+        logoFile: null // Yahan image file store hogi
     });
 
+    // 1. Fetch Schools List
     useEffect(() => {
         fetchSchools();
     }, []);
@@ -34,24 +35,21 @@ const SuperAdminDashboard = () => {
     const fetchSchools = async () => {
         try {
             const res = await axios.get(`${API_URL}/super-admin/schools`);
-            if (res.data.success) setSchools(res.data.data);
+            if (res.data.success) {
+                setSchools(res.data.data);
+            }
         } catch (err) {
             console.error("Error fetching schools", err);
-            // Fallback Dummy Data if API fails
-            if (schools.length === 0) {
-                setSchools([
-                    { _id: 1, name: "Delhi Public School", schoolId: "DPS", email: "principal@dps.com", status: "Active" },
-                    { _id: 2, name: "St. Xavier's", schoolId: "STX", email: "principal@stx.com", status: "Active" }
-                ]);
-            }
         }
     };
 
+    // 2. Handle Add School (With Image Upload)
     const handleAddSchool = async (e) => {
         e.preventDefault();
         setLoading(true);
+
         try {
-            // 1. Prepare Form Data for File Upload
+            // FormData Banana padega kyunki hum File bhej rahe hain
             const data = new FormData();
             data.append('schoolName', formData.schoolName);
             data.append('schoolCode', formData.schoolCode);
@@ -61,19 +59,19 @@ const SuperAdminDashboard = () => {
             data.append('tagline', formData.tagline);
             data.append('address', formData.address);
 
-            // Append File if selected
+            // Agar Logo select kiya hai to attach karein
             if (formData.logoFile) {
                 data.append('logoFile', formData.logoFile);
             }
 
-            // 2. Send API Request
+            // Backend Request (Content-Type: multipart/form-data zaruri hai)
             await axios.post(`${API_URL}/super-admin/add-school`, data, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
-            alert("✅ School Created Successfully!");
+            alert("✅ School & Principal ID Created Successfully!");
             setShowModal(false);
-            fetchSchools(); // Refresh list
+            fetchSchools(); // List refresh
 
             // Reset Form
             setFormData({
@@ -128,17 +126,13 @@ const SuperAdminDashboard = () => {
                         <Building size={20} /> <span className="font-medium">Manage Schools</span>
                     </div>
 
-                    {/* ✅ NEW: STORE ORDERS LINK */}
+                    {/* ✅ Store Orders Link Included */}
                     <Link to="/super-admin/orders" className="p-3.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-xl cursor-pointer flex items-center gap-3 transition group">
                         <ShoppingBag size={20} /> <span className="font-medium">Store Orders</span>
-                        <div className="ml-auto bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">New</div>
                     </Link>
 
                     <div className="p-3.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-xl cursor-pointer flex items-center gap-3 transition group">
                         <DollarSign size={20} /> <span className="font-medium">Revenue</span>
-                    </div>
-                    <div className="p-3.5 text-slate-400 hover:bg-slate-800/50 hover:text-white rounded-xl cursor-pointer flex items-center gap-3 transition group">
-                        <Activity size={20} /> <span className="font-medium">System Logs</span>
                     </div>
                 </nav>
 
@@ -181,14 +175,14 @@ const SuperAdminDashboard = () => {
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                         {[
-                            { label: 'Total Revenue', val: '₹ 45 L', icon: <DollarSign />, color: 'bg-emerald-500', shadow: 'shadow-emerald-200' },
-                            { label: 'Active Schools', val: schools.length || '0', icon: <Building />, color: 'bg-blue-500', shadow: 'shadow-blue-200' },
-                            { label: 'Total Students', val: '15k', icon: <Users />, color: 'bg-violet-500', shadow: 'shadow-violet-200' },
-                            { label: 'System Health', val: '99%', icon: <Activity />, color: 'bg-orange-500', shadow: 'shadow-orange-200' },
+                            { label: 'Total Revenue', val: '₹ 45 L', icon: <DollarSign />, color: 'bg-emerald-500' },
+                            { label: 'Active Schools', val: schools.length || '0', icon: <Building />, color: 'bg-blue-500' },
+                            { label: 'Total Students', val: '15k', icon: <Users />, color: 'bg-violet-500' },
+                            { label: 'System Health', val: '99%', icon: <Activity />, color: 'bg-orange-500' },
                         ].map((stat, idx) => (
                             <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg border border-gray-100 transition duration-300 group">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className={`p-3.5 rounded-xl text-white ${stat.color} shadow-lg ${stat.shadow} group-hover:scale-110 transition duration-300`}>
+                                    <div className={`p-3.5 rounded-xl text-white ${stat.color} shadow-lg group-hover:scale-110 transition duration-300`}>
                                         {stat.icon}
                                     </div>
                                     <span className="bg-gray-50 text-gray-400 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Update</span>
@@ -215,10 +209,10 @@ const SuperAdminDashboard = () => {
                                     {schools.map((school) => (
                                         <tr key={school._id} className="hover:bg-gray-50/80 transition group">
                                             <td className="p-6 flex items-center gap-3">
-                                                {/* Display Cloudinary Logo */}
+                                                {/* Logo Display */}
                                                 <img
                                                     src={school.branding?.logo || "https://via.placeholder.com/40"}
-                                                    className="w-8 h-8 rounded object-contain bg-gray-50 border border-gray-200"
+                                                    className="w-10 h-10 rounded-lg object-contain bg-white border border-gray-200"
                                                     alt="School Logo"
                                                 />
                                                 <span className="font-bold text-gray-900 text-sm">{school.name}</span>
@@ -238,16 +232,14 @@ const SuperAdminDashboard = () => {
             {/* --- COMPLETE ADD SCHOOL MODAL --- */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto scale-100 animate-in zoom-in-95 duration-200">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
 
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
                                 <h2 className="text-2xl font-extrabold text-gray-900">Setup New School</h2>
                                 <p className="text-sm text-gray-500">Create account & customize branding.</p>
                             </div>
-                            <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition text-gray-400 hover:text-gray-600">
-                                <X size={24} />
-                            </button>
+                            <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition"><X size={24} /></button>
                         </div>
 
                         <form onSubmit={handleAddSchool} className="p-6 md:p-8 space-y-8">
@@ -258,7 +250,7 @@ const SuperAdminDashboard = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 uppercase mb-1.5 block">School Name</label>
-                                        <input required type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition font-medium"
+                                        <input required type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                             placeholder="e.g. Delhi Public School"
                                             value={formData.schoolName} onChange={(e) => setFormData({ ...formData, schoolName: e.target.value })} />
                                     </div>
@@ -270,13 +262,13 @@ const SuperAdminDashboard = () => {
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 uppercase mb-1.5 block">Principal Email</label>
-                                        <input required type="email" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium"
+                                        <input required type="email" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                             placeholder="principal@dps.com"
                                             value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 uppercase mb-1.5 block">Password</label>
-                                        <input required type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-medium"
+                                        <input required type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                             placeholder="Secret Password"
                                             value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
                                     </div>
@@ -290,7 +282,7 @@ const SuperAdminDashboard = () => {
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 uppercase mb-1.5 block">Theme Color</label>
                                         <div className="flex gap-3">
-                                            <input type="color" className="h-12 w-14 border border-gray-200 rounded-xl cursor-pointer p-1 bg-white shadow-sm"
+                                            <input type="color" className="h-12 w-14 border border-gray-200 rounded-xl cursor-pointer p-1"
                                                 value={formData.themeColor} onChange={(e) => setFormData({ ...formData, themeColor: e.target.value })} />
                                             <input type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-500 font-mono" readOnly value={formData.themeColor} />
                                         </div>
@@ -316,7 +308,7 @@ const SuperAdminDashboard = () => {
 
                                 <div>
                                     <label className="text-xs font-bold text-gray-500 uppercase mb-1.5 block">Tagline</label>
-                                    <input type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition font-medium"
+                                    <input type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none"
                                         placeholder="e.g. Excellence in Education"
                                         value={formData.tagline} onChange={(e) => setFormData({ ...formData, tagline: e.target.value })} />
                                 </div>
@@ -327,7 +319,7 @@ const SuperAdminDashboard = () => {
                                 <h3 className="text-xs font-bold text-green-600 uppercase tracking-widest border-b border-green-100 pb-2 mb-4">3. Contact Info</h3>
                                 <div>
                                     <label className="text-xs font-bold text-gray-500 uppercase mb-1.5 block">Address</label>
-                                    <input type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition font-medium"
+                                    <input type="text" className="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                                         placeholder="Full School Address"
                                         value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
                                 </div>
